@@ -1,0 +1,2 @@
+Создать игру на pygame на подобии sonic classic, называющаюся conic klassic
+
