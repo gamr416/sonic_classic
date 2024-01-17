@@ -19,7 +19,7 @@ class Map:
         self.map = pytmx.load_pygame('maps/map1.tmx')
         self.height = self.map.height
         self.width = self.map.width
-        self.tile_size = 3
+        self.tile_size = 6
         self.free_tiles = free_tiles
         self.finish_tiles = finish_tiles
 
@@ -60,21 +60,18 @@ def load_image(name, colorkey=None):
 
 
 if __name__ == '__main__':
-    MAP = Map('maps/map1.tmx', [9635, 9634], 41)
+    MAP = Map('maps/map1.tmx', [0, 1, 2, 3, 4, 5], 3182)
     game = Game(MAP)
     SCREEN.fill((0, 0, 255))
-    pygame.display.set_caption('Game over')
-    x = -600
-    y = 0
+    pygame.display.set_caption('conic klassic')
     running = True
-    fps = 60
     clock = pygame.time.Clock()
     while running:
         game.render(SCREEN)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        clock.tick(fps)
+        clock.tick(FPS)
         pygame.display.flip()
     pygame.quit()
 
