@@ -16,7 +16,7 @@ class Map:
         absolute_path = os.path.dirname(__file__)
         relative_path = f'{MAPS_DIR}/{filename}'
         full_path = os.path.join(absolute_path, relative_path)
-        self.map = pytmx.load_pygame('maps/map1.tmx')
+        self.map = pytmx.load_pygame('maps/map2.tmx')
         self.height = self.map.height
         self.width = self.map.width
         self.tile_size = 6
@@ -33,7 +33,7 @@ class Map:
         return self.map.tiledgidmap[self.map.get_tile_gid(*position, 0)]
 
     def is_free(self, position):
-        return self.get_tile_id(position) in self.free_tiles
+        return self.get_tile_id(position) not in self.free_tiles
 
 
 class Game:
@@ -60,7 +60,7 @@ def load_image(name, colorkey=None):
 
 
 if __name__ == '__main__':
-    MAP = Map('maps/map1.tmx', [0, 1, 2, 3, 4, 5], 3182)
+    MAP = Map('maps/map2.tmx', [0, 1, 2, 3, 4, 5], 3182)
     game = Game(MAP)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('conic klassic')
