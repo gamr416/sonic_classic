@@ -45,7 +45,27 @@ class Map:
     def is_free(self, position) -> bool:
         return self.get_tile_id(position) not in self.solid_tiles
 
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, sheet, columns, rows, x, y):
+        super().__init__(all_sprites)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(x, y)
 
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    def update(self):
+        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
+        self.image = self.frames[self.cur_frame]
 class Sonic:
     def __init__(self, picture, position):
         self.x, self.y = position
@@ -113,6 +133,18 @@ class Sonic:
         clock.tick(FPS)
 
 
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+
+
+
 class Game:
     def __init__(self, map, sonic):
         self.map = map
@@ -121,6 +153,10 @@ class Game:
         self.last_left = False
         self.right = False
         self.last_right = True
+        self.last_way = None
+        self.counter_way = 0
+        self.MAX_COUNTER_WAY = 4
+        self.count_jump = 0
 
     def render(self, screen):
         self.map.render(screen)
@@ -142,64 +178,112 @@ class Game:
         running = True
         while running:
             if JUMP:
+                self.count_jump = 0
                 next_y -= 1
                 count += 1
-                if count == 2:
+                if count == 3:
                     JUMP = False
                     count = 0
             if not JUMP and self.map.is_free((next_x, next_y + 2)):
                 next_y += 0.1
-            for event in pygame.event.get():
-                if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
-                        and not self.map.is_free((next_x, next_y + 2)):
-                    next_y -= 30 / FPS
-                    next_x += 10 / FPS
-                if pygame.key.get_pressed()[pygame.K_a] and pygame.key.get_pressed()[pygame.K_SPACE] \
-                        and not self.map.is_free((next_x, next_y + 2)):
-                    next_y -= 30 / FPS
-                    next_x -= 10 / FPS
-                if event.type == pygame.QUIT:
-                    running = False
-                if pygame.key.get_pressed()[pygame.K_a]:
+                '''
+                if self.map.is_free((next_x, next_y + 0.1 ** self.count_jump)):
+                    next_y += 0.1 ** self.count_jump
+                else:
+                    next_y += 1
+                '''
+                if self.last_way == 'RIGHT':
+                    if self.counter_way > self.MAX_COUNTER_WAY:
+                        next_x += (2 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
+                    else:
+                        next_x += (2 ** (1/2 * self.counter_way)) / FPS
+                elif self.last_way == 'LEFT':
+                    if self.counter_way > self.MAX_COUNTER_WAY:
+                        next_x -= (2 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
+                    else:
+                        next_x -= (2 ** (1/2 * self.counter_way)) / FPS
+
+            if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
+                    and not self.map.is_free((next_x, next_y + 2)):
+                JUMP = True
+                if self.counter_way > self.MAX_COUNTER_WAY:
+                    next_x += (2 ** self.MAX_COUNTER_WAY) / FPS
+                else:
+                    next_x += (2 ** self.counter_way) / FPS
+            if pygame.key.get_pressed()[pygame.K_a] and pygame.key.get_pressed()[pygame.K_SPACE] \
+                    and not self.map.is_free((next_x, next_y + 2)):
+                next_y -= 3
+                next_x -= 1
+            if (pygame.key.get_pressed()[pygame.K_a]
+                    and not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_SPACE]
+                    and self.map.is_free((next_x, next_y +1))):
+                if self.last_way != 'LEFT':
+                    self.counter_way = 2
                     self.left = True
                     self.right = False
                     self.last_right = False
                     self.last_left = True
-                    next_x -= 5 / FPS
-                    print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
-                          f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
-                elif pygame.key.get_pressed()[pygame.K_d]:
+                    next_x -= 2 ** self.MAX_COUNTER_WAY / FPS
+                else:
+                    self.counter_way += 0.05
+                    if self.counter_way > self.MAX_COUNTER_WAY:
+                        next_x -= (2 ** self.MAX_COUNTER_WAY) / FPS
+                    else:
+                        next_x -= (2 ** self.counter_way) / FPS
+                self.last_way = 'LEFT'
+                #print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
+                #      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
+
+            elif (pygame.key.get_pressed()[pygame.K_d]
+                  and not pygame.key.get_pressed()[pygame.K_a]
+                  and self.map.is_free((next_x, next_y +1))):
+                if self.last_way != 'RIGHT':
+                    self.counter_way = 2
                     self.left = False
                     self.right = True
                     self.last_right = True
                     self.last_left = False
-                    next_x += 5 / FPS
-                    print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
-                          f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
+                    next_x += 4 / FPS
                 else:
-                    self.left = False
-                    self.right = False
+                    self.counter_way += 0.05
+                    if self.counter_way > self.MAX_COUNTER_WAY:
+                        next_x += (2 ** self.MAX_COUNTER_WAY) / FPS
+                    else:
+                        next_x += (2 ** self.counter_way) / FPS
+                self.last_way = 'RIGHT'
 
-                if pygame.key.get_pressed()[pygame.K_SPACE] and not pygame.key.get_pressed()[pygame.K_s] \
-                        and not self.map.is_free((next_x, next_y + 2)):
-                    print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
-                          f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
-                    next_y -= 30 / FPS
-                    '''
-                    speed = 1
-                    last = speed
-                    
+                #print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
+                #      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
+            else:
+                self.left = False
+                self.right = False
+
+            if pygame.key.get_pressed()[pygame.K_SPACE] and not pygame.key.get_pressed()[pygame.K_s] \
+                    and self.map.is_free((next_x, next_y - 2)) and not self.map.is_free((next_x, next_y + 2)):
+                print(self.sonic.get_position(), not self.map.is_free((next_x, next_y - 2)),
+                      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
+                JUMP =True
+                '''
+                speed = 1
+                last = speed
+                
+                almost_done = False
+                while speed / FPS < last:
+                    last -= speed / FPS                             
+                    next_y -= speed / FPS
+                    almost_done = Trueaaad
+                if almost_done:
+                    next_y -= last
                     almost_done = False
-                    while speed / FPS < last:
-                        last -= speed / FPS                             
-                        next_y -= speed / FPS
-                        almost_done = Trueaaad
-                    if almost_done:
-                        next_y -= last
-                        almost_done = False
-                    '''
-                if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE]:
-                    next_y += 30 / FPS
+                '''
+            if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free((next_x, next_y + 2)):
+                next_y += 1
+
+            if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
+                self.last_way = None
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
                 if event.type != pygame.key.get_pressed()[pygame.K_a] \
                         or event.type != pygame.key.get_pressed()[pygame.K_s] \
                         or event.type != pygame.key.get_pressed()[pygame.K_d] \
@@ -212,7 +296,9 @@ class Game:
             pygame.display.flip()
 
 
+
 all_sprites = pygame.sprite.Group()
+camera = Camera()
 
 
 def load_image(name, colorkey=None):
