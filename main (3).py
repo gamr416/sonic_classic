@@ -11,7 +11,7 @@ MAPS_DIR = 'maps'
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
-TILE_SIZE = 30
+TILE_SIZE = 32
 FPS = 30
 left = False
 right = False
@@ -28,11 +28,10 @@ def load_image(name, colorkey=None):
 
 if __name__ == '__main__':
     camera = Camera()
-    MAP = Map('maps/map3.tmx', [1, 50], 175,3152, 3)
+    MAP = Map('maps/map3.tmx', [1, 50], 175, 3152, 3)
     SONIC = Sonic("Sonic Sprites/tile000.png", (3, 12))
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Sonic classic')
-    clock = pygame.time.Clock()
     Game.update_sonic(game)
     pygame.quit()

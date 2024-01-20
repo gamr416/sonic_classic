@@ -47,12 +47,6 @@ class Game:
                     count = 0
             if not JUMP and self.map.is_free((next_x, next_y + 2)):
                 next_y += 0.1
-                '''
-                if self.map.is_free((next_x, next_y + 0.1 ** self.count_jump)):
-                    next_y += 0.1 ** self.count_jump
-                else:
-                    next_y += 1
-                '''
                 if self.last_way == 'RIGHT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
                         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
@@ -92,9 +86,6 @@ class Game:
                     else:
                         next_x -= (2 ** self.counter_way) / FPS
                 self.last_way = 'LEFT'
-                # print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
-                #      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
-
             elif (pygame.key.get_pressed()[pygame.K_d]
                   and not pygame.key.get_pressed()[pygame.K_a]
                   and self.map.is_free((next_x, next_y + 1))):
@@ -112,9 +103,6 @@ class Game:
                     else:
                         next_x += (2 ** self.counter_way) / FPS
                 self.last_way = 'RIGHT'
-
-                # print(self.sonic.get_position(), not self.map.is_free((next_x, next_y + 2)),
-                #      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
             else:
                 self.left = False
                 self.right = False
@@ -124,19 +112,6 @@ class Game:
                 print(self.sonic.get_position(), not self.map.is_free((next_x, next_y - 2)),
                       f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
                 JUMP = True
-                '''
-                speed = 1
-                last = speed
-
-                almost_done = False
-                while speed / FPS < last:
-                    last -= speed / FPS                             
-                    next_y -= speed / FPS
-                    almost_done = Trueaaad
-                if almost_done:
-                    next_y -= last
-                    almost_done = False
-                '''
             if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
                     (next_x, next_y + 2)):
                 next_y += 1

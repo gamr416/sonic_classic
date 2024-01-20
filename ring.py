@@ -15,3 +15,6 @@ class Ring:
 
     def get_position(self):
         return self.x, self.y
+
+    def render(self, screen):
+        pass
