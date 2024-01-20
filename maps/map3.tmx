@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="20" tilewidth="30" tileheight="30" infinite="0" nextlayerid="2" nextobjectid="1">
- <tileset firstgid="1" source="R:/яндекс 2 год работы/sonic-classic/maps/tiles2.tsx"/>
+ <tileset firstgid="1" source="tiles2.tsx"/>
  <layer id="1" name="Слой тайлов 1" width="40" height="20">
   <data encoding="csv">
 64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,
