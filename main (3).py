@@ -21,6 +21,18 @@ idle = pygame.image.load('Sonic Sprites/tile000.png')
 anim_iter = 0
 
 
+
+class StartWindow:
+    def __init__(self):
+        self.start = False
+
+    def starting_game(self):
+        running = True
+        while running:
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
+                self.start = True
+                running = False
+
 class Map:
     def __init__(self, filename, bad_tiles, finish_tiles, level):
         absolute_path = os.path.dirname(__file__)
@@ -45,27 +57,7 @@ class Map:
     def is_free(self, position) -> bool:
         return self.get_tile_id(position) not in self.solid_tiles
 
-class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(all_sprites)
-        self.frames = []
-        self.cut_sheet(sheet, columns, rows)
-        self.cur_frame = 0
-        self.image = self.frames[self.cur_frame]
-        self.rect = self.rect.move(x, y)
 
-    def cut_sheet(self, sheet, columns, rows):
-        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
-                                sheet.get_height() // rows)
-        for j in range(rows):
-            for i in range(columns):
-                frame_location = (self.rect.w * i, self.rect.h * j)
-                self.frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, self.rect.size)))
-
-    def update(self):
-        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-        self.image = self.frames[self.cur_frame]
 class Sonic:
     def __init__(self, picture, position):
         self.x, self.y = position
@@ -176,7 +168,13 @@ class Game:
         JUMP = False
         count = 0
         running = True
+        sound1.play(-1)
+        sound1.set_volume(0.1)
         while running:
+            font = pygame.font.Font(None, 10)
+            text = font.render("Hello, Pygame!", 1, (100, 255, 100))
+            text_x, text_y = 0, 0
+            SCREEN.blit(text, (text_x, text_y))
             if JUMP:
                 self.count_jump = 0
                 next_y -= 1
@@ -194,14 +192,14 @@ class Game:
                 '''
                 if self.last_way == 'RIGHT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x += (2 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
+                        next_x += (1 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
                     else:
-                        next_x += (2 ** (1/2 * self.counter_way)) / FPS
+                        next_x += (1 ** (1/2 * self.counter_way)) / FPS
                 elif self.last_way == 'LEFT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x -= (2 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
+                        next_x -= (1 ** (1/2 * self.MAX_COUNTER_WAY)) / FPS
                     else:
-                        next_x -= (2 ** (1/2 * self.counter_way)) / FPS
+                        next_x -= (1 ** (1/2 * self.counter_way)) / FPS
 
             if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
                     and not self.map.is_free((next_x, next_y + 2)):
@@ -235,7 +233,7 @@ class Game:
                 #      f'left-{self.left}, right-{self.right}, ll-{self.last_left}, lr-{self.last_right}')
 
             elif (pygame.key.get_pressed()[pygame.K_d]
-                  and not pygame.key.get_pressed()[pygame.K_a]
+                  and not pygame.key.get_pressed()[pygame.K_a] and not pygame.key.get_pressed()[pygame.K_SPACE]
                   and self.map.is_free((next_x, next_y +1))):
                 if self.last_way != 'RIGHT':
                     self.counter_way = 2
@@ -296,9 +294,10 @@ class Game:
             pygame.display.flip()
 
 
-
 all_sprites = pygame.sprite.Group()
 camera = Camera()
+start = StartWindow()
+sound1 = pygame.mixer.Sound('music/GHzone.MP3')
 
 
 def load_image(name, colorkey=None):
