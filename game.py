@@ -32,11 +32,31 @@ class Game:
                 self.sonic.render_idle_right(screen)
 
     def update_sonic(self):
+        gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
+        title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
+        starting = True
+        running = True
+        title_sound.play()
+        title_sound.set_volume(0.1)
+        while starting:
+            new_start_pic = pygame.transform.scale(self.start_pic, SIZE)
+            SCREEN.blit(new_start_pic, (0, 0))
+            font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
+            text = font.render('PRESS SPACE TO START', True, (255, 255, 0))
+            text_rect = text.get_rect(center=(WIDTH / 40 * 19, HEIGHT / 40 * 31))
+            SCREEN.blit(text, text_rect)
+            if pygame.key.get_pressed()[pygame.K_SPACE]:
+                starting = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    starting = False
+                    running = False
+            pygame.display.flip()
+        title_sound.stop()
         clock = pygame.time.Clock()
         next_x, next_y = self.sonic.get_position()
         JUMP = False
         count = 0
-        running = True
         while running:
             if JUMP:
                 self.count_jump = 0
