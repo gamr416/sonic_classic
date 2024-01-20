@@ -18,6 +18,7 @@ class Game:
         self.counter_way = 0
         self.MAX_COUNTER_WAY = 4
         self.count_jump = 0
+        self.start_pic = pygame.image.load('start_win.jpg')
 
     def render(self, screen):
         self.map.render(screen)
@@ -57,6 +58,8 @@ class Game:
         next_x, next_y = self.sonic.get_position()
         JUMP = False
         count = 0
+        gh_sound.play(-1)
+        gh_sound.set_volume(0.1)
         while running:
             if JUMP:
                 self.count_jump = 0
