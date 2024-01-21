@@ -25,6 +25,11 @@ class Sonic:
         self.idle_left = pygame.image.load('Sonic Sprites/tile000_копия.png')
         self.jump_image = pygame.image.load('Sonic Sprites/tile036.png')
         self.anim_iter = 0
+        self.jump_sprites = [pygame.image.load('Sonic Sprites/tile032.png'),
+                             pygame.image.load('Sonic Sprites/tile033.png'),
+                             pygame.image.load('Sonic Sprites/tile034.png'),
+                             pygame.image.load('Sonic Sprites/tile035.png'),
+                             pygame.image.load('Sonic Sprites/tile036.png')]
 
     def get_position(self):
         return self.x, self.y
@@ -54,17 +59,8 @@ class Sonic:
         delta = (self.idle_right.get_width() - TILE_SIZE) // 2
         screen.blit(self.idle_right, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
-    def jump(self, x, y):
-        speed = 10
-        last = speed
-        almost_done = False
-        if speed / FPS < last:
-            last -= speed / FPS
-            y += speed / FPS
-            almost_done = True
-        elif almost_done:
-            y += last
-            almost_done = False
+    def render_jump(self, x, y):
+
 
         '''
         print(x, y)
