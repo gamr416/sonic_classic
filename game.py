@@ -57,6 +57,8 @@ class Game:
         clock = pygame.time.Clock()
         next_x, next_y = self.sonic.get_position()
         JUMP = False
+        jump_height = 3
+        last_jump = 3
         count = 0
         gh_sound.play(-1)
         gh_sound.set_volume(0.1)
