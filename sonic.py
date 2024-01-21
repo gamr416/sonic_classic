@@ -60,6 +60,7 @@ class Sonic:
         self.start_screen_sonic_last = [
             pygame.transform.scale(elements, (elements.get_width() * 2, elements.get_height() * 2))
             for elements in self.start_screen_sonic_last]
+        self.rect = self.jump_image.get_rect()
 
     def get_position(self):
         return self.x, self.y
@@ -67,8 +68,6 @@ class Sonic:
     def set_position(self, position):
         self.x, self.y = position
 
-    def render_back(self, screen):
-        pass
     def render_start_sonic(self, screen):
         if self.cur_frame != 300:
             self.cur_frame += 1

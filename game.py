@@ -92,6 +92,8 @@ class Game:
         gh_sound.set_volume(0.1)
         playing_ticks = pygame.time.get_ticks()
         while running:
+            camera = Camera()
+            camera.update(self.sonic)
             seconds = (pygame.time.get_ticks() - playing_ticks) // 100
             if seconds >= 6000:
                 running = False
@@ -226,3 +228,17 @@ class Game:
                     ending = False
             self.render(SCREEN)
             clock.tick(FPS)
+
+
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2)
