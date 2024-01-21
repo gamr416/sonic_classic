@@ -34,12 +34,32 @@ class Sonic:
         self.jump_sprites_left = [pygame.transform.flip(elements, True, False)
                                   for elements in self.jump_sprites_right]
         self.sprites_down = pygame.image.load('Sonic Sprites/tile006.png')
+        self.start_screen_sonic = [pygame.image.load('Sonic Sprites/sonic_start_1.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_2.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_3.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_4.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_5.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_6.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_7.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_8.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_9.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_10.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_11.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_12.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_13.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_14.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_15.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_16.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_17.png'),
+                                   pygame.image.load('Sonic Sprites/sonic_start_18.png'),
+                                   ]
 
     def get_position(self):
         return self.x, self.y
 
     def set_position(self, position):
         self.x, self.y = position
+
 
     def render_left_run(self, screen):
         if self.anim_iter + 1 >= 30:
