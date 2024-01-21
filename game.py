@@ -64,6 +64,7 @@ class Game:
         count = 0
         gh_sound.play(-1)
         gh_sound.set_volume(0.1)
+        start_ticks=pygame.time.get_ticks()
         while running:
             seconds = (pygame.time.get_ticks() - start_ticks) // 100
             if seconds >= 6000:
