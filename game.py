@@ -163,6 +163,10 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.map.is_free((next_x, next_y + 2)):
                         JUMP = True
+            font = pygame.font.Font('font/sonic-press-start-button.otf', 10)
+            text = font.render(f'TIME {seconds // 600} {seconds % 600}', True, (255, 255, 0))
+            SCREEN.blit(text, (10, 10))
+            pygame.display.flip()
             self.render(SCREEN)
             self.sonic.set_position((next_x, next_y))
             clock.tick(FPS)
