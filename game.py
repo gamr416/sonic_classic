@@ -4,7 +4,6 @@ SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
 FPS = 30
 
-
 class Game:
     def __init__(self, map, sonic):
         self.map = map
@@ -55,8 +54,8 @@ class Game:
         while starting:
             starting_seconds = (pygame.time.get_ticks() - start_ticks) // 100
             new_start_pic = pygame.transform.scale(self.start_pic, SIZE)
+            SCREEN.blit(new_start_pic, (0, 0))
             self.sonic.render_start_sonic(SCREEN)
-
             if starting_seconds >= 5:
                 font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
                 text = font.render('PRESS SPACE TO START', True, (255, 255, 0))
