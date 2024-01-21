@@ -59,7 +59,7 @@ class Sonic:
     def set_position(self, position):
         self.x, self.y = position
 
-    def render_start_screen(self, screen):
+    def render_start_sonic(self, screen):
         if self.anim_iter + 1 >= 18:
             self.anim_iter = 0
         delta = (self.start_screen_sonic[self.anim_iter].get_width() - TILE_SIZE) // 2
