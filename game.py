@@ -94,6 +94,8 @@ class Game:
         while running:
             camera = Camera()
             camera.update(self.sonic)
+            for sprite in all_sprites:
+                camera.apply(sprite)
             seconds = (pygame.time.get_ticks() - playing_ticks) // 100
             if seconds >= 6000:
                 running = False
@@ -228,7 +230,6 @@ class Game:
                     ending = False
             self.render(SCREEN)
             clock.tick(FPS)
-
 
 class Camera:
     def __init__(self):
