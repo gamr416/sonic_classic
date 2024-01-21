@@ -12,7 +12,7 @@ class Map:
         self.map = pytmx.load_pygame(f'{MAPS_DIR}/map{level}.tmx')
         self.height = self.map.height
         self.width = self.map.width
-        self.tile_size = 30
+        self.tile_size = 40
         self.solid_tiles = bad_tiles
         self.finish_tiles = finish_tiles
 

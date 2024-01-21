@@ -11,7 +11,7 @@ MAPS_DIR = 'maps'
 pygame.init()
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
-TILE_SIZE = 32
+TILE_SIZE = 40
 FPS = 30
 left = False
 right = False
@@ -28,7 +28,7 @@ def load_image(name, colorkey=None):
 
 if __name__ == '__main__':
     camera = Camera()
-    MAP = Map('maps/map4.tmx', [1, 20], 2, 3152, 3)
+    MAP = Map('maps/map5.tmx', [1, 2], 2, 3152, 5)
     SONIC = Sonic((3, 12))
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))

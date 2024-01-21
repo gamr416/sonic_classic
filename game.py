@@ -121,7 +121,7 @@ class Game:
                         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
                     else:
                         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
-            if not self.JUMP and self.map.is_free((next_x, next_y + 2)):
+            if not self.JUMP and self.map.is_free((next_x, next_y)):
                 next_y += 0.5
                 if self.last_way == 'RIGHT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
@@ -133,7 +133,7 @@ class Game:
                         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
                     else:
                         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
-            if not self.map.is_free((next_x, next_y + 2)):
+            if not self.map.is_free((next_x, next_y)):
                 self.fall_after_jump = False
             '''
             if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
@@ -149,7 +149,7 @@ class Game:
                 next_x -= 1
             '''
             if (pygame.key.get_pressed()[pygame.K_a]
-                    and self.map.is_free((next_x, next_y + 1))):
+                    and self.map.is_free((next_x, next_y))):
                 if self.last_way != 'LEFT':
                     self.counter_way = 2
                     self.left = True
@@ -165,7 +165,7 @@ class Game:
                         next_x -= (2 ** self.counter_way) / FPS
                 self.last_way = 'LEFT'
             elif (pygame.key.get_pressed()[pygame.K_d]
-                  and self.map.is_free((next_x, next_y + 1))):
+                  and self.map.is_free((next_x, next_y))):
                 if self.last_way != 'RIGHT':
                     self.counter_way = 2
                     self.left = False
@@ -186,7 +186,7 @@ class Game:
 
             if (pygame.key.get_pressed()[pygame.K_s]
                     and not pygame.key.get_pressed()[pygame.K_SPACE]
-                    and not self.map.is_free((next_x, next_y + 2))
+                    and not self.map.is_free((next_x, next_y))
                     and not pygame.key.get_pressed()[pygame.K_a]
                     and not pygame.key.get_pressed()[pygame.K_d]):
                 self.down = True
@@ -195,7 +195,7 @@ class Game:
                 self.down = False
 
             if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
-                    (next_x, next_y + 2)):
+                    (next_x, next_y)):
                 next_y += 1
 
             if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
@@ -206,7 +206,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if (event.key == pygame.K_SPACE
                             and not pygame.key.get_pressed()[pygame.K_s]
-                            and not self.map.is_free((next_x, next_y + 2))):
+                            and not self.map.is_free((next_x, next_y))):
                         self.JUMP = True
                         self.sonic.jump_iter = 0
             font = pygame.font.Font('font/sonic-press-start-button.otf', 10)
@@ -230,6 +230,10 @@ class Game:
                     ending = False
             self.render(SCREEN)
             clock.tick(FPS)
+
+
+all_sprites = pygame.sprite.Group()
+
 
 class Camera:
     def __init__(self):

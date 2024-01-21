@@ -3,7 +3,7 @@ import pygame
 SIZE = WIDTH, HEIGHT = 1200, 600
 FPS = 30
 SCREEN = pygame.display.set_mode(SIZE)
-TILE_SIZE = 30
+TILE_SIZE = 40
 
 
 class Ring:
