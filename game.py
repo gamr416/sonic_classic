@@ -54,7 +54,7 @@ class Game:
         while starting:
             starting_seconds = (pygame.time.get_ticks() - start_ticks) // 100
             new_start_pic = pygame.transform.scale(self.start_pic, SIZE)
-            self.sonic.render_start_screen(SCREEN)
+            self.sonic.render_start_sonic(SCREEN)
 
             if starting_seconds >= 5:
                 font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
