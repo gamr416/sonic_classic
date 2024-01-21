@@ -11,6 +11,7 @@ clock = pygame.time.Clock()
 class Sonic:
     def __init__(self, picture, position):
         self.x, self.y = position
+        self.start_x, self.start_y = 17, 6
         self.run_left = [pygame.image.load('Sonic Sprites/tile008_копия.png'),
                          pygame.image.load('Sonic Sprites/tile009_копия.png'),
                          pygame.image.load('Sonic Sprites/tile010_копия.png'),
@@ -60,6 +61,13 @@ class Sonic:
     def set_position(self, position):
         self.x, self.y = position
 
+    def render_start_sonic(self, screen):
+        if self.jump_iter + 1 >= 10:
+            self.jump_iter = 0
+        delta = (self.start_screen_sonic[self.jump_iter // 2].get_width() - TILE_SIZE) // 2
+        screen.blit(self.start_screen_sonic[self.jump_iter // 2], (self.start_x * TILE_SIZE - delta, self.start_y * TILE_SIZE - delta))
+        if self.jump_iter != 18:
+            self.jump_iter += 1
 
     def render_left_run(self, screen):
         if self.anim_iter + 1 >= 30:
