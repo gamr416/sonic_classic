@@ -25,7 +25,7 @@ class Game:
         if self.JUMP or self.fall_after_jump:
             print(1)
             self.sonic.render_jump(screen)
-        if self.left and not self.JUMP and not self.fall_after_jump:
+        elif self.left and not self.JUMP and not self.fall_after_jump:
             self.sonic.render_left_run(screen)
         elif self.right and not self.JUMP and not self.fall_after_jump:
             self.sonic.render_right_run(screen)
@@ -64,8 +64,8 @@ class Game:
         title_sound.stop()
         clock = pygame.time.Clock()
         next_x, next_y = self.sonic.get_position()
-        jump_height = 3
-        last_jump = 3
+        jump_height = 5
+        last_jump = 5
         max_jump = False
         count = 0
         gh_sound.play(-1)
@@ -98,7 +98,7 @@ class Game:
                     else:
                         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
             if not self.JUMP and self.map.is_free((next_x, next_y + 2)):
-                next_y += 0.5
+                next_y += 0.1
                 if self.last_way == 'RIGHT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
                         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
