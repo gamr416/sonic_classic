@@ -22,12 +22,13 @@ class Game:
 
     def render(self, screen):
         self.map.render(screen)
-        if self.left:
-            self.sonic.render_left_run(screen)
-        elif self.right:
-            self.sonic.render_right_run(screen)
-        elif self.JUMP and self.fall_after_jump:
+        if self.JUMP or self.fall_after_jump:
+            print(1)
             self.sonic.render_jump(screen)
+        if self.left and not self.JUMP and not self.fall_after_jump:
+            self.sonic.render_left_run(screen)
+        elif self.right and not self.JUMP and not self.fall_after_jump:
+            self.sonic.render_right_run(screen)
         else:
             if self.last_left:
                 self.sonic.render_idle_left(screen)
@@ -170,7 +171,7 @@ class Game:
                     running = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE and not self.map.is_free((next_x, next_y + 2)):
-                        JUMP = True
+                        self.JUMP = True
             font = pygame.font.Font('font/sonic-press-start-button.otf', 10)
             text = font.render(f'TIME {seconds // 600} {seconds % 600}', True, (255, 255, 0))
             SCREEN.blit(text, (10, 10))

@@ -62,7 +62,7 @@ class Sonic:
     def render_jump(self, screen):
         if self.anim_iter + 1 >= 30:
             self.anim_iter = 0
-        delta = (self.jump_sprites[self.anim_iter // 5].get_width() - TILE_SIZE) // 2
-        screen.blit(self.jump_sprites[self.anim_iter // 5], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+        delta = (self.jump_sprites[self.anim_iter // 4].get_width() - TILE_SIZE) // 2
+        screen.blit(self.jump_sprites[self.anim_iter // 4], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
         self.anim_iter += 1
 
