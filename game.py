@@ -35,8 +35,10 @@ class Game:
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
+        over_sound = pygame.mixer.Sound('music/gameover.mp3')
         starting = True
         running = True
+        ending = False
         title_sound.play()
         title_sound.set_volume(0.1)
         while starting:
@@ -63,6 +65,11 @@ class Game:
         gh_sound.play(-1)
         gh_sound.set_volume(0.1)
         while running:
+            seconds = (pygame.time.get_ticks() - start_ticks) // 100
+            if seconds >= 6000:
+                running = False
+                gh_sound.stop()
+                ending = True
             if JUMP:
                 if 0.5 ** count < last_jump:
                     next_y -= 0.5 ** count
@@ -159,3 +166,16 @@ class Game:
             self.sonic.set_position((next_x, next_y))
             clock.tick(FPS)
             pygame.display.flip()
+        over_sound.play()
+        over_sound.set_volume(0.1)
+        while ending:
+            font = pygame.font.Font('font/sonic-press-start-button.otf', 30)
+            text = font.render(f'GAME OVER', True, (255, 255, 0))
+            text_rect = text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+            SCREEN.blit(text, text_rect)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    ending = False
+            self.render(SCREEN)
+            clock.tick(FPS)
