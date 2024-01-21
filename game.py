@@ -4,6 +4,7 @@ SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
 FPS = 30
 
+
 class Game:
     def __init__(self, map, sonic):
         self.map = map
