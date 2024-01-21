@@ -17,10 +17,13 @@ class Game:
         self.counter_way = 0
         self.MAX_COUNTER_WAY = 4
         self.count_jump = 0
-        self.start_pic = pygame.image.load('start_win.jpg')
+        self.bg_pic = pygame.image.load('Sonic Sprites/background.jpg')
+        self.second_bg = self.bg_pic
         self.JUMP = False
         self.fall_after_jump = False
         self.down = False
+        self.bg_pic_x = 0
+        self.second_bg_x = self.second_bg.get_width()
 
     def render(self, screen):
         self.map.render(screen)
@@ -42,6 +45,7 @@ class Game:
             elif self.last_right:
                 self.sonic.render_idle_right(screen)
 
+
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
@@ -52,12 +56,20 @@ class Game:
         title_sound.play()
         title_sound.set_volume(0.1)
         start_ticks = pygame.time.get_ticks()
+        animation_flag = True
+        second_animation_flag = False
         while starting:
             starting_seconds = (pygame.time.get_ticks() - start_ticks) // 100
-            new_start_pic = pygame.transform.scale(self.start_pic, SIZE)
-            SCREEN.blit(new_start_pic, (0, 0))
+            self.bg_pic_x -= 1
+            self.second_bg_x -= 1
+            if self.second_bg_x + self.second_bg.get_width() == WIDTH:
+                self.bg_pic_x = WIDTH
+            if self.bg_pic_x + self.bg_pic.get_width() == WIDTH:
+                self.second_bg_x = WIDTH
+            SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
+            SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
             self.sonic.render_start_sonic(SCREEN)
-            if starting_seconds >= 5:
+            if starting_seconds >= 50:
                 font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
                 text = font.render('PRESS SPACE TO START', True, (255, 255, 0))
                 text_rect = text.get_rect(center=(WIDTH / 40 * 19, HEIGHT / 40 * 31))
