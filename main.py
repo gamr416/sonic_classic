@@ -29,7 +29,7 @@ def load_image(name, colorkey=None):
 if __name__ == '__main__':
     camera = Camera()
     MAP = Map('maps/map4.tmx', [1, 20], 2, 3152, 3)
-    SONIC = Sonic("Sonic Sprites/tile000.png", (3, 12))
+    SONIC = Sonic((3, 12))
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Sonic classic')
