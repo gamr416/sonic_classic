@@ -25,6 +25,7 @@ class Sonic:
         self.idle_left = pygame.image.load('Sonic Sprites/tile000_копия.png')
         self.jump_image = pygame.image.load('Sonic Sprites/tile036.png')
         self.anim_iter = 0
+        self.jump_iter = 0
         self.jump_sprites = [pygame.image.load('Sonic Sprites/tile032.png'),
                              pygame.image.load('Sonic Sprites/tile033.png'),
                              pygame.image.load('Sonic Sprites/tile034.png'),
@@ -60,10 +61,10 @@ class Sonic:
         screen.blit(self.idle_right, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
     def render_jump(self, screen):
-        if self.anim_iter + 1 >= 30:
-            self.anim_iter = 0
-        delta = (self.jump_sprites[self.anim_iter // 6].get_width() - TILE_SIZE) // 2
-        screen.blit(self.jump_sprites[self.anim_iter // 6], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
-        if self.anim_iter != 1:
-            self.anim_iter += 1
+        if self.jump_iter + 1 >= 10:
+            self.jump_iter = 0
+        delta = (self.jump_sprites[self.jump_iter // 2].get_width() - TILE_SIZE) // 2
+        screen.blit(self.jump_sprites[self.jump_iter // 2], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+        if self.jump_iter != 8:
+            self.jump_iter += 1
 
