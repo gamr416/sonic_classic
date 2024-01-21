@@ -23,7 +23,7 @@ class Map:
                 screen.blit(image, (x * self.tile_size, y * self.tile_size))
 
     def get_tile_id(self, position) -> int:
-        return self.map.tiledgidmap[self.map.get_tile_gid(*position, 0)]
+        return self.map.tiledgidmap.get(self.map.get_tile_gid(*position, 0))
 
     def is_free(self, position) -> bool:
         return self.get_tile_id(position) not in self.solid_tiles

@@ -59,13 +59,10 @@ class Sonic:
         delta = (self.idle_right.get_width() - TILE_SIZE) // 2
         screen.blit(self.idle_right, (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
 
-    def render_jump(self, x, y):
+    def render_jump(self, screen):
+        if self.anim_iter + 1 >= 30:
+            self.anim_iter = 0
+        delta = (self.jump_sprites[self.anim_iter // 5].get_width() - TILE_SIZE) // 2
+        screen.blit(self.jump_sprites[self.anim_iter // 5], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+        self.anim_iter += 1
 
-
-        '''
-        print(x, y)
-        y += 1
-        '''
-        SCREEN.blit(self.jump_image, (x, y))
-        pygame.display.flip()
-        clock.tick(FPS)
