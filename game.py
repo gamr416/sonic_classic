@@ -3,6 +3,7 @@ import pygame
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
 FPS = 30
+TILE_SIZE = 40
 
 
 class Game:
@@ -27,6 +28,16 @@ class Game:
         self.first_screen = False
         self.second_screen = False
         self.flag_start_bg = False
+        self.world_offset = [0, 0]
+
+
+    def blit_all_tiles(self, window, tmxdata, world_offset):
+        for layer in tmxdata:
+            for tile in layer.tiles():
+                img = pygame.transform.scale(tile[2], (40, 40))
+                x_pixel = tile[0] * 40 + world_offset[0]
+                y_pixel = tile[1] * 40 + world_offset[1]
+                window.blit(img, (x_pixel, y_pixel))
 
     def render(self, screen):
         self.map.render(screen)
@@ -53,6 +64,7 @@ class Game:
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
         over_sound = pygame.mixer.Sound('music/gameover.mp3')
+
         starting = True
         running = True
         ending = False
@@ -94,9 +106,21 @@ class Game:
         gh_sound.play(-1)
         gh_sound.set_volume(0.1)
         playing_ticks = pygame.time.get_ticks()
+        SCREEN.fill((0, 0, 0))
         while running:
-            camera = Camera()
-            camera.update(self.sonic)
+            self.bg_pic_x -= 20 / FPS
+            self.second_bg_x -= 20 / FPS
+            if self.bg_pic_x + self.second_bg.get_width() <= WIDTH and self.flag_start_bg:
+                self.second_bg_x = WIDTH
+                self.flag_start_bg = False
+            if self.second_bg_x + self.bg_pic.get_width() <= WIDTH and not self.flag_start_bg:
+                self.bg_pic_x = WIDTH
+                self.flag_start_bg = True
+            SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
+            SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
+            self.map.render(SCREEN)
+            self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
+            self.render(SCREEN)
             seconds = (pygame.time.get_ticks() - playing_ticks) // 100
             if seconds >= 6000:
                 running = False
@@ -123,7 +147,8 @@ class Game:
                     else:
                         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
             if not self.JUMP and self.map.is_free((next_x, next_y)):
-                next_y += 0.5
+                print(1)
+                self.world_offset[1] -= 5
                 if self.last_way == 'RIGHT':
                     if self.counter_way > self.MAX_COUNTER_WAY:
                         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
@@ -201,6 +226,17 @@ class Game:
 
             if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                 self.last_way = None
+
+            if next_x > 22:
+                next_x = 22
+                self.world_offset[0] -= 10
+            if next_x < 18:
+                next_x = 18
+                self.world_offset[0] += 10
+
+            # if next_y >= HEIGHT / TILE_SIZE - 10 and self.map.is_free((next_x, next_y + 4)):
+            #     next_y = HEIGHT / TILE_SIZE - 10
+            #     self.world_offset[1] -= 4
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -214,7 +250,6 @@ class Game:
             text = font.render(f'TIME {seconds // 600} {seconds % 600}', True, (255, 255, 0))
             SCREEN.blit(text, (10, 10))
             pygame.display.flip()
-            self.render(SCREEN)
             self.sonic.set_position((next_x, next_y))
             clock.tick(FPS)
             pygame.display.flip()
@@ -234,17 +269,3 @@ class Game:
 
 
 all_sprites = pygame.sprite.Group()
-
-
-class Camera:
-    def __init__(self):
-        self.dx = 0
-        self.dy = 0
-
-    def apply(self, obj):
-        obj.rect.x += self.dx
-        obj.rect.y += self.dy
-
-    def update(self, target):
-        self.dx = -(target.get_position()[0] - WIDTH // 2)
-        self.dy = -(target.get_position()[1] - HEIGHT // 2)
