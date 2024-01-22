@@ -30,6 +30,7 @@ class Game:
         self.second_screen = False
         self.flag_start_bg = False
         self.world_offset = [0, -425]
+        self.entered_camera_move = False
         # self.map_layer = pyscroll.BufferedRenderer(
         # data=pyscroll.TiledMapData(self.map),
         # size=(400, 400))
@@ -217,7 +218,7 @@ class Game:
                         next_x -= (2 ** self.MAX_COUNTER_WAY) / FPS
                     else:
                         next_x -= (2 ** self.counter_way) / FPS
-                if next_x < 14:
+                if next_x < 14 and self.entered_camera_move:
                     next_x = 14
                     self.world_offset[0] += 10
                 self.last_way = 'LEFT'
@@ -236,8 +237,9 @@ class Game:
                         next_x += (2 ** self.MAX_COUNTER_WAY) / FPS
                     else:
                         next_x += (2 ** self.counter_way) / FPS
-                if next_x > 14:
-                    next_x = 14
+                if next_x > 16:
+                    self.entered_camera_move = True
+                    next_x = 16
                     self.world_offset[0] -= 10
                 self.last_way = 'RIGHT'
             else:
