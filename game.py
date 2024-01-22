@@ -24,6 +24,9 @@ class Game:
         self.down = False
         self.bg_pic_x = 0
         self.second_bg_x = self.second_bg.get_width()
+        self.first_screen = False
+        self.second_screen = False
+        self.flag_start_bg = False
 
     def render(self, screen):
         self.map.render(screen)
@@ -56,20 +59,20 @@ class Game:
         title_sound.play()
         title_sound.set_volume(0.1)
         start_ticks = pygame.time.get_ticks()
-        animation_flag = True
-        second_animation_flag = False
         while starting:
             starting_seconds = (pygame.time.get_ticks() - start_ticks) // 100
-            self.bg_pic_x -= 1
-            self.second_bg_x -= 1
-            if self.second_bg_x + self.second_bg.get_width() == WIDTH:
-                self.bg_pic_x = WIDTH
-            if self.bg_pic_x + self.bg_pic.get_width() == WIDTH:
+            self.bg_pic_x -= 20 / FPS
+            self.second_bg_x -= 20 / FPS
+            if self.bg_pic_x + self.second_bg.get_width() <= WIDTH and self.flag_start_bg:
                 self.second_bg_x = WIDTH
+                self.flag_start_bg = False
+            if self.second_bg_x + self.bg_pic.get_width() <= WIDTH and not self.flag_start_bg:
+                self.bg_pic_x = WIDTH
+                self.flag_start_bg = True
             SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
             SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
             self.sonic.render_start_sonic(SCREEN)
-            if starting_seconds >= 50:
+            if starting_seconds >= 5:
                 font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
                 text = font.render('PRESS SPACE TO START', True, (255, 255, 0))
                 text_rect = text.get_rect(center=(WIDTH / 40 * 19, HEIGHT / 40 * 31))
@@ -94,8 +97,6 @@ class Game:
         while running:
             camera = Camera()
             camera.update(self.sonic)
-            for sprite in all_sprites:
-                camera.apply(sprite)
             seconds = (pygame.time.get_ticks() - playing_ticks) // 100
             if seconds >= 6000:
                 running = False
@@ -229,7 +230,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     ending = False
             self.render(SCREEN)
-            clock.tick(FPS)
+        clock.tick(FPS)
 
 
 all_sprites = pygame.sprite.Group()
@@ -245,5 +246,5 @@ class Camera:
         obj.rect.y += self.dy
 
     def update(self, target):
-        self.dx = -(target.rect.x + target.rect.w // 2 - WIDTH // 2)
-        self.dy = -(target.rect.y + target.rect.h // 2 - HEIGHT // 2)
+        self.dx = -(target.get_position()[0] - WIDTH // 2)
+        self.dy = -(target.get_position()[1] - HEIGHT // 2)

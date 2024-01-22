@@ -70,14 +70,14 @@ class Sonic:
 
     def render_start_sonic(self, screen):
         if self.cur_frame != 300:
-            self.cur_frame += 1
+            self.cur_frame += 30 / FPS
             needed_frame = self.cur_frame // 20
-            image = self.start_screen_sonic[needed_frame]
+            image = self.start_screen_sonic[int(needed_frame)]
         else:
-            self.last_two = self.last_two + 1
+            self.last_two = self.last_two + 30 / FPS
             needed_frame = (self.last_two // 25) % 2
-            image = self.start_screen_sonic_last[needed_frame]
-        screen.blit(image, (WIDTH // 4, HEIGHT // 15))
+            image = self.start_screen_sonic_last[int(needed_frame)]
+        screen.blit(image, (WIDTH * 10 / 39, HEIGHT // 15))
 
     def render_left_run(self, screen):
         if self.anim_iter + 1 >= 30:
