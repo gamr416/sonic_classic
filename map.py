@@ -9,12 +9,13 @@ class Map:
         absolute_path = os.path.dirname(__file__)
         relative_path = f'{MAPS_DIR}/{filename}'
         full_path = os.path.join(absolute_path, relative_path)
-        self.map = pytmx.load_pygame(f'{MAPS_DIR}/map{level}.tmx')
+        self.map = pytmx.util_pygame.load_pygame(f'{MAPS_DIR}/map{level}.tmx')
         self.height = self.map.height
         self.width = self.map.width
         self.tile_size = 40
         self.solid_tiles = bad_tiles
         self.finish_tiles = finish_tiles
+        self.ring_tiles = ring_tiles
 
     def render(self, screen):
         for y in range(self.height):
