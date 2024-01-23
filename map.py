@@ -25,3 +25,4 @@ class Map:
 
     def is_free(self, position) -> bool:
         return self.get_tile_id(position) not in self.solid_tiles
+

@@ -130,7 +130,7 @@ class Game:
         playing_ticks = pygame.time.get_ticks()
         SCREEN.fill((0, 0, 0))
         while running:
-            map_next_x = next_x - self.world_offset[0] / TILE_SIZE
+            map_next_x = next_x - self.world_offset[0] / TILE_SIZE + 0.5
             map_next_y = next_y - self.world_offset[1] / TILE_SIZE
             SCREEN.fill((0, 0, 0))
             self.bg_pic_x -= 20 / FPS
@@ -288,17 +288,15 @@ class Game:
                         self.JUMP = True
                         self.sonic.jump_iter = 0
             font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
-            text = font.render(f"TIME {seconds // 600}\'\' {seconds % 600}",
+            time_text = font.render(f"TIME {seconds // 600}\'\' {seconds % 600}",
                                True, (255, 255, 0), (0, 0, 0))
-            touching = self.get_tile_properties(self.map.map, map_next_x, map_next_y, self.world_offset)
-            if touching['collectable']:  # onion ring
+            ring_text = font.render(f"RINGS {self.ring_amount}",
+                               True, (255, 255, 0), (0, 0, 0))
+            if self.map.get_tile_id((map_next_x, map_next_y)) in self.map.ring_tiles:
                 self.ring_amount += 1
-                tile_x = touching['x']
-                tile_y = touching['y']
-                self.map.map.layers[0].data[tile_y][tile_x] = 2
-                print(self.ring_amount)
-
-            SCREEN.blit(text, (25, 10))
+                self.map.map.layers[0].data[int(map_next_y)][int(map_next_x)] = 2
+            SCREEN.blit(time_text, (25, 10))
+            SCREEN.blit(ring_text, (25, 40))
             pygame.display.flip()
             self.sonic.set_position((next_x, next_y))
             clock.tick(FPS)
