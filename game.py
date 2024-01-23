@@ -33,6 +33,7 @@ class Game:
         self.entered_camera_move = False
         self.wall_stop_r = False
         self.wall_stop_l = False
+        self.ring_amount = 0
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -42,21 +43,19 @@ class Game:
                 y_pixel = tile[1] * 40 + world_offset[1]
                 window.blit(img, (x_pixel, y_pixel))
 
-    # def get_tile_properties(self, tmxdata, x, y, world_offset):
-    #     world_x = x - world_offset[0]
-    #     world_y = y - world_offset[1]
-    #     tile_x = world_x // 20
-    #     tile_y = world_y // 20
-    #     layer = tmxdata.layers[0]
-    #     try:
-    #         properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
-    #     except ValueError:
-    #         properties = {"climbable": 0, "ground": 0, "health": -10000, "points": 0, "provides": "", "requires": "",
-    #                       "solid": 0}
-    #     if properties is None:
-    #         properties = {"climbable": 0, "ground": 0, "health": 0, "points": 0, "provides": "", "requires": "",
-    #                       "solid": 0}
-    #     return properties
+    def get_tile_properties(self, tmxdata, x, y, world_offset):
+        world_x = x - world_offset[0]
+        world_y = y - world_offset[1]
+        tile_x = world_x // 20
+        tile_y = world_y // 20
+        layer = tmxdata.layers[0]
+        try:
+            properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
+        except ValueError:
+            properties = {'collectable': False}
+        if properties is None:
+            properties = {'collectable': False}
+        return properties
 
     def render(self, screen):
         if (self.JUMP or self.fall_after_jump) and self.last_right:
@@ -291,6 +290,14 @@ class Game:
             font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
             text = font.render(f"TIME {seconds // 600}\'\' {seconds % 600}",
                                True, (255, 255, 0), (0, 0, 0))
+            touching = self.get_tile_properties(self.map.map, map_next_x, map_next_y, self.world_offset)
+            if touching['collectable']:  # onion ring
+                self.ring_amount += 1
+                tile_x = touching['x']
+                tile_y = touching['y']
+                self.map.map.layers[0].data[tile_y][tile_x] = 2
+                print(self.ring_amount)
+
             SCREEN.blit(text, (25, 10))
             pygame.display.flip()
             self.sonic.set_position((next_x, next_y))
