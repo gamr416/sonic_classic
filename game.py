@@ -264,23 +264,12 @@ class Game:
             if not pygame.key.get_pressed()[pygame.K_s]:
                 self.down = False
 
-            if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
-                    (map_next_x, map_next_y + 1)):
-                self.world_offset[1] -= 1 * TILE_SIZE / FPS
+            # if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
+            #         (map_next_x, map_next_y + 1)):
+            #     self.world_offset[1] -= 1 * TILE_SIZE / FPS
 
             if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                 self.last_way = None
-
-            # if next_x > 22:
-            #     next_x = 22
-            #     self.world_offset[0] -= 10
-            # if next_x < 18:
-            #     next_x = 18
-            #     self.world_offset[0] += 10
-
-            # if next_y >= HEIGHT / TILE_SIZE - 10 and self.map.is_free((next_x, next_y + 4)):
-            #     next_y = HEIGHT / TILE_SIZE - 10
-            #     self.world_offset[1] -= 4
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
