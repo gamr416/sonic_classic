@@ -4,7 +4,6 @@ import os
 from game import Game
 from sonic import Sonic
 from map import Map
-from ring import Ring
 from camera import Camera
 
 MAPS_DIR = 'maps'
@@ -29,7 +28,7 @@ def load_image(name, colorkey=None):
 if __name__ == '__main__':
     camera = Camera()
     SONIC = Sonic((10, 10))
-    MAP = Map([1, 2, 16, 17], 6, 3152, 6)
+    MAP = Map([1, 2, 16, 17], 6, [87, 88, 63, 64], 6)
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Conic klassik')
