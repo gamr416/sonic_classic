@@ -133,7 +133,6 @@ class Game:
         while running:
             map_next_x = next_x - self.world_offset[0] / TILE_SIZE
             map_next_y = next_y - self.world_offset[1] / TILE_SIZE
-            print(self.sonic.get_position())
             SCREEN.fill((0, 0, 0))
             self.bg_pic_x -= 20 / FPS
             self.second_bg_x -= 20 / FPS
