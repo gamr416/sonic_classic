@@ -85,6 +85,7 @@ class Game:
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
         over_sound = pygame.mixer.Sound('music/gameover.mp3')
+        ring_sound = pygame.mixer.Sound('music/ring.mp3')
 
         starting = True
         running = True
@@ -293,7 +294,10 @@ class Game:
             ring_text = font.render(f"RINGS {self.ring_amount}",
                                True, (255, 255, 0), (0, 0, 0))
             if self.map.get_tile_id((map_next_x, map_next_y)) in self.map.ring_tiles:
+                ring_sound.stop()
                 self.ring_amount += 1
+                ring_sound.play()
+                ring_sound.set_volume(0.1)
                 self.map.map.layers[0].data[int(map_next_y)][int(map_next_x)] = 2
             SCREEN.blit(time_text, (25, 10))
             SCREEN.blit(ring_text, (25, 40))
