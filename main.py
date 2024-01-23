@@ -28,10 +28,10 @@ def load_image(name, colorkey=None):
 
 if __name__ == '__main__':
     camera = Camera()
-    MAP = Map('maps/map5.tmx', [1, 2], 2, 3152, 5)
     SONIC = Sonic((3, 12))
+    MAP = Map([1, 2, 16, 17], 6, 3152, 6)
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
-    pygame.display.set_caption('Sonic classic')
+    pygame.display.set_caption('Conic klassik')
     Game.update_sonic(game)
     pygame.quit()

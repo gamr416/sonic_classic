@@ -17,4 +17,8 @@ class Ring:
         return self.x, self.y
 
     def render(self, screen):
-        pass
+        if self.anim_iter + 1 >= 24:
+            self.anim_iter = 0
+        delta = (self.rings[self.anim_iter // 6].get_width() - TILE_SIZE) // 2
+        screen.blit(self.rings[self.anim_iter // 6],
+                    (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
