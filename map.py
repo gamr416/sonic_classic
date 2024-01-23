@@ -5,10 +5,7 @@ MAPS_DIR = 'maps'
 
 
 class Map:
-    def __init__(self, filename, bad_tiles, ring_tiles, finish_tiles, level):
-        absolute_path = os.path.dirname(__file__)
-        relative_path = f'{MAPS_DIR}/{filename}'
-        full_path = os.path.join(absolute_path, relative_path)
+    def __init__(self, bad_tiles, ring_tiles, finish_tiles, level):
         self.map = pytmx.util_pygame.load_pygame(f'{MAPS_DIR}/map{level}.tmx')
         self.height = self.map.height
         self.width = self.map.width

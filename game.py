@@ -29,22 +29,12 @@ class Game:
         self.first_screen = False
         self.second_screen = False
         self.flag_start_bg = False
-        self.world_offset = [0, -425]
+        self.world_offset = [0, -300]
         self.entered_camera_move = False
-        # self.map_layer = pyscroll.BufferedRenderer(
-        # data=pyscroll.TiledMapData(self.map),
-        # size=(400, 400))
-        # self.group = pyscroll.PyscrollGroup(self.map_layer)
-        # surface = self.sonic.idle_right.convert_alpha()
-        # sprite = Sprite(surface)
-        # self.group.add(sprite)
-        # self.group.center(sprite.rect.center)
-
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
             for tile in layer.tiles():
-
                 img = pygame.transform.scale(tile[2], (40, 40))
                 x_pixel = tile[0] * 40 + world_offset[0]
                 y_pixel = tile[1] * 40 + world_offset[1]
@@ -53,8 +43,8 @@ class Game:
     def get_tile_properties(self, tmxdata, x, y, world_offset):
         world_x = x - world_offset[0]
         world_y = y - world_offset[1]
-        tile_x = world_x // 35
-        tile_y = world_y // 35
+        tile_x = world_x // 20
+        tile_y = world_y // 20
         layer = tmxdata.layers[0]
         try:
             properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
@@ -67,9 +57,9 @@ class Game:
         return properties
 
     def render(self, screen):
-        if self.JUMP or self.fall_after_jump and self.last_right:
+        if (self.JUMP or self.fall_after_jump) and self.last_right:
             self.sonic.render_jump_right(screen)
-        elif self.JUMP or self.fall_after_jump and self.last_left:
+        elif (self.JUMP or self.fall_after_jump) and self.last_left:
             self.sonic.render_jump_left(screen)
         elif self.left and not self.JUMP and not self.fall_after_jump:
             self.sonic.render_left_run(screen)
@@ -125,16 +115,18 @@ class Game:
         title_sound.stop()
         clock = pygame.time.Clock()
         next_x, next_y = self.sonic.get_position()
-        jump_height = 3
-        last_jump = 3
+        map_next_x, map_next_y = next_x, next_y
+        jump_height = 6
+        last_jump = 5
         max_jump = False
-        count = 0
+        count = 1
         gh_sound.play(-1)
         gh_sound.set_volume(0.1)
         playing_ticks = pygame.time.get_ticks()
         SCREEN.fill((0, 0, 0))
         while running:
-            # self.group.draw(SCREEN)
+            map_next_x = next_x - self.world_offset[0] / TILE_SIZE
+            map_next_y = next_y - self.world_offset[1] / TILE_SIZE
             print(self.sonic.get_position())
             SCREEN.fill((0, 0, 0))
             self.bg_pic_x -= 20 / FPS
@@ -156,42 +148,38 @@ class Game:
                 gh_sound.stop()
                 ending = True
             if self.JUMP:
-                if self.map.is_free((next_x, next_y - self.world_offset[1] // TILE_SIZE)):
-                    print(1)
-                if 0.5 ** count < last_jump and self.map.is_free((next_x, next_y - 0.5 ** count)):
-                    next_y -= 0.5 ** count
+                if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                     self.world_offset[1] += 0.5 * TILE_SIZE
                     last_jump -= 0.5 ** count
-                elif 0.5 ** count >= last_jump and self.map.is_free((next_x, next_y - 0.5 ** count)):
-                    next_y -= last_jump
+                elif 0.5 ** count >= last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
+                    self.world_offset[1] += last_jump * TILE_SIZE
                     count = 1
-                    last_jump = 3
+                    last_jump = 5
                     self.JUMP = False
                     self.fall_after_jump = True
-                if self.last_way == 'RIGHT':
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    else:
-                        next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
-                elif self.last_way == 'LEFT':
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    else:
-                        next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
-            if not self.JUMP and self.map.is_free((next_x, next_y - self.world_offset[1] // TILE_SIZE)):
-                next_y += 0.5
-                self.world_offset[1] -= 5
-                if self.last_way == 'RIGHT':
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    else:
-                        next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
-                elif self.last_way == 'LEFT':
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    else:
-                        next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
-            if not self.map.is_free((next_x, next_y)):
+                # if self.last_way == 'RIGHT':
+                #     if self.counter_way > self.MAX_COUNTER_WAY:
+                #         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
+                #     else:
+                #         next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
+                # elif self.last_way == 'LEFT':
+                #     if self.counter_way > self.MAX_COUNTER_WAY:
+                #         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
+                #     else:
+                #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
+            if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
+                self.world_offset[1] -= 0.5 * TILE_SIZE
+                # if self.last_way == 'RIGHT':
+                #     if self.counter_way > self.MAX_COUNTER_WAY:
+                #         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
+                #     else:
+                #         next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
+                # elif self.last_way == 'LEFT':
+                #     if self.counter_way > self.MAX_COUNTER_WAY:
+                #         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
+                #     else:
+                #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
+            if not self.map.is_free((map_next_x, map_next_y + 1)):
                 self.fall_after_jump = False
             '''
             if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
@@ -207,43 +195,47 @@ class Game:
                 next_x -= 1
             '''
             if (pygame.key.get_pressed()[pygame.K_a]
-                    and self.map.is_free((next_x, next_y))):
-                if self.last_way != 'LEFT' and self.map.is_free((next_x - self.world_offset[0] // TILE_SIZE, next_y)):
+                    and self.map.is_free((map_next_x, map_next_y))):
+                if self.last_way != 'LEFT':
                     self.counter_way = 2
                     self.left = True
                     self.right = False
                     self.last_right = False
                     self.last_left = True
-                    next_x -= 2 ** self.MAX_COUNTER_WAY / FPS
+                    if self.map.is_free((map_next_x - 4 / FPS, map_next_y)):
+                        self.world_offset[0] += 4 * TILE_SIZE / FPS
                 else:
                     self.counter_way += 0.05
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x -= (2 ** self.MAX_COUNTER_WAY) / FPS
-                    else:
-                        next_x -= (2 ** self.counter_way) / FPS
-                if next_x < 14 and self.entered_camera_move:
-                    next_x = 14
+                    if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free(
+                            (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                        self.world_offset[0] += (2 ** self.MAX_COUNTER_WAY) * TILE_SIZE / FPS
+                    elif self.counter_way < self.MAX_COUNTER_WAY and self.map.is_free(
+                            (map_next_x - (2 ** self.counter_way) / FPS, map_next_y)):
+                        self.world_offset[0] += (2 ** self.counter_way) * TILE_SIZE / FPS
+                if next_x < 15 and self.entered_camera_move:
+                    next_x = 15
                     self.world_offset[0] += 10
                 self.last_way = 'LEFT'
             elif (pygame.key.get_pressed()[pygame.K_d]
-                  and self.map.is_free((next_x - self.world_offset[0] // TILE_SIZE, next_y))):
+                  and self.map.is_free((map_next_x, map_next_y))):
                 if self.last_way != 'RIGHT':
                     self.counter_way = 2
                     self.left = False
                     self.right = True
                     self.last_right = True
                     self.last_left = False
-                    next_x += 4 / FPS
+                    if self.map.is_free((map_next_x + 4 / FPS, map_next_y)):
+                        self.world_offset[0] -= 4 * TILE_SIZE / FPS
                 else:
                     self.counter_way += 0.05
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x += (2 ** self.MAX_COUNTER_WAY) / FPS
-                    else:
-                        next_x += (2 ** self.counter_way) / FPS
-                if next_x > 16:
+                    if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                        self.world_offset[0] -= (2 ** self.MAX_COUNTER_WAY) * TILE_SIZE / FPS
+                    elif self.counter_way < self.MAX_COUNTER_WAY and self.map.is_free((map_next_x + (2 ** self.counter_way) / FPS, map_next_y)):
+                        self.world_offset[0] -= (2 ** self.counter_way) * TILE_SIZE / FPS
+                if next_x > 15:
                     self.entered_camera_move = True
-                    next_x = 16
-                    self.world_offset[0] -= 10
+                    next_x = 15
+                    self.world_offset[0] -= 15 * TILE_SIZE
                 self.last_way = 'RIGHT'
             else:
                 self.left = False
@@ -251,7 +243,7 @@ class Game:
 
             if (pygame.key.get_pressed()[pygame.K_s]
                     and not pygame.key.get_pressed()[pygame.K_SPACE]
-                    and not self.map.is_free((next_x, next_y))
+                    and not self.map.is_free((map_next_x, map_next_y + 1))
                     and not pygame.key.get_pressed()[pygame.K_a]
                     and not pygame.key.get_pressed()[pygame.K_d]):
                 self.down = True
@@ -260,7 +252,7 @@ class Game:
                 self.down = False
 
             if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
-                    (next_x, next_y - self.world_offset[1] // TILE_SIZE)):
+                    (map_next_x, map_next_y)):
                 next_y += 1
 
             if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
@@ -282,7 +274,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if (event.key == pygame.K_SPACE
                             and not pygame.key.get_pressed()[pygame.K_s]
-                            and not self.map.is_free((next_x, next_y))):
+                            and not self.map.is_free((map_next_x, map_next_y + 1))):
                         self.JUMP = True
                         self.sonic.jump_iter = 0
             font = pygame.font.Font('font/sonic-press-start-button.otf', 10)

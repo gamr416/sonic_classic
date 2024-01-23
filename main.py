@@ -9,7 +9,7 @@ from camera import Camera
 
 MAPS_DIR = 'maps'
 pygame.init()
-SIZE = WIDTH, HEIGHT = 1200, 1000
+SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
 TILE_SIZE = 40
 FPS = 30
@@ -28,7 +28,7 @@ def load_image(name, colorkey=None):
 
 if __name__ == '__main__':
     camera = Camera()
-    SONIC = Sonic((3, 12))
+    SONIC = Sonic((10, 10))
     MAP = Map([1, 2, 16, 17], 6, 3152, 6)
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
