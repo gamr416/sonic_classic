@@ -29,8 +29,10 @@ class Game:
         self.first_screen = False
         self.second_screen = False
         self.flag_start_bg = False
-        self.world_offset = [0, -300]
+        self.world_offset = [0, -520]
         self.entered_camera_move = False
+        self.wall_stop_r = False
+        self.wall_stop_l = False
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -40,27 +42,31 @@ class Game:
                 y_pixel = tile[1] * 40 + world_offset[1]
                 window.blit(img, (x_pixel, y_pixel))
 
-    def get_tile_properties(self, tmxdata, x, y, world_offset):
-        world_x = x - world_offset[0]
-        world_y = y - world_offset[1]
-        tile_x = world_x // 20
-        tile_y = world_y // 20
-        layer = tmxdata.layers[0]
-        try:
-            properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
-        except ValueError:
-            properties = {"climbable": 0, "ground": 0, "health": -10000, "points": 0, "provides": "", "requires": "",
-                          "solid": 0}
-        if properties is None:
-            properties = {"climbable": 0, "ground": 0, "health": 0, "points": 0, "provides": "", "requires": "",
-                          "solid": 0}
-        return properties
+    # def get_tile_properties(self, tmxdata, x, y, world_offset):
+    #     world_x = x - world_offset[0]
+    #     world_y = y - world_offset[1]
+    #     tile_x = world_x // 20
+    #     tile_y = world_y // 20
+    #     layer = tmxdata.layers[0]
+    #     try:
+    #         properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
+    #     except ValueError:
+    #         properties = {"climbable": 0, "ground": 0, "health": -10000, "points": 0, "provides": "", "requires": "",
+    #                       "solid": 0}
+    #     if properties is None:
+    #         properties = {"climbable": 0, "ground": 0, "health": 0, "points": 0, "provides": "", "requires": "",
+    #                       "solid": 0}
+    #     return properties
 
     def render(self, screen):
         if (self.JUMP or self.fall_after_jump) and self.last_right:
             self.sonic.render_jump_right(screen)
         elif (self.JUMP or self.fall_after_jump) and self.last_left:
             self.sonic.render_jump_left(screen)
+        elif self.wall_stop_r:
+            self.sonic.render_wall_stop_right(screen)
+        elif self.wall_stop_l:
+            self.sonic.render_wall_stop_left(screen)
         elif self.left and not self.JUMP and not self.fall_after_jump:
             self.sonic.render_left_run(screen)
         elif self.right and not self.JUMP and not self.fall_after_jump:
@@ -142,6 +148,8 @@ class Game:
             # self.map.render(SCREEN)
             self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
             self.render(SCREEN)
+            self.wall_stop_r = False
+            self.wall_stop_l = False
             seconds = (pygame.time.get_ticks() - playing_ticks) // 100
             if seconds >= 6000:
                 running = False
@@ -215,6 +223,7 @@ class Game:
                     else:
                         try:
                             if not self.map.is_free((map_next_x - (2 ** self.counter_way) / FPS, map_next_y)):
+                                self.wall_stop_l = True
                                 self.counter_way = 2
                         except ValueError:
                             pass
@@ -242,6 +251,7 @@ class Game:
                     else:
                         try:
                             if not self.map.is_free((map_next_x + (2 ** self.counter_way) / FPS, map_next_y)):
+                                self.wall_stop_r = True
                                 self.counter_way = 2
                         except ValueError:
                             pass
@@ -279,9 +289,10 @@ class Game:
                             and not self.map.is_free((map_next_x, map_next_y + 1))):
                         self.JUMP = True
                         self.sonic.jump_iter = 0
-            font = pygame.font.Font('font/sonic-press-start-button.otf', 10)
-            text = font.render(f'TIME {seconds // 600} {seconds % 600}', True, (255, 255, 0))
-            SCREEN.blit(text, (10, 10))
+            font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
+            text = font.render(f"TIME {seconds // 600}\'\' {seconds % 600}",
+                               True, (255, 255, 0), (0, 0, 0))
+            SCREEN.blit(text, (25, 10))
             pygame.display.flip()
             self.sonic.set_position((next_x, next_y))
             clock.tick(FPS)

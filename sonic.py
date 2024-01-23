@@ -28,6 +28,7 @@ class Sonic:
         self.jump_image = pygame.image.load('Sonic Sprites/tile036.png')
         self.anim_iter = 0
         self.jump_iter = 0
+        self.wall_iter = 0
         self.jump_sprites_right = [pygame.image.load('Sonic Sprites/tile032.png'),
                                    pygame.image.load('Sonic Sprites/tile033.png'),
                                    pygame.image.load('Sonic Sprites/tile034.png'),
@@ -53,7 +54,10 @@ class Sonic:
                                    pygame.image.load('Sonic Sprites/sonic_start_15.png'),
                                    pygame.image.load('Sonic Sprites/sonic_start_16.png')]
         self.start_screen_sonic_last = [pygame.image.load('Sonic Sprites/sonic_start_17.png'),
-                                        pygame.image.load('Sonic Sprites/sonic_start_18.png'), ]
+                                        pygame.image.load('Sonic Sprites/sonic_start_18.png')]
+        self.sonic_wall_right = [pygame.image.load('Sonic Sprites/tile037.png'),
+                                   pygame.image.load('Sonic Sprites/tile038.png'),
+                                   pygame.image.load('Sonic Sprites/tile039.png')]
         self.start_screen_sonic = [
             pygame.transform.scale(elements, (elements.get_width() * 2, elements.get_height() * 2))
             for elements in self.start_screen_sonic]
@@ -61,6 +65,8 @@ class Sonic:
             pygame.transform.scale(elements, (elements.get_width() * 2, elements.get_height() * 2))
             for elements in self.start_screen_sonic_last]
         self.rect = self.jump_image.get_rect()
+        self.sonic_wall_left = [pygame.transform.flip(elements, True, False)
+                                for elements in self.sonic_wall_right]
 
     def get_position(self):
         return self.x, self.y
@@ -78,6 +84,20 @@ class Sonic:
             needed_frame = (self.last_two // 25) % 2
             image = self.start_screen_sonic_last[int(needed_frame)]
         screen.blit(image, (WIDTH * 10 / 39, HEIGHT // 15))
+
+    def render_wall_stop_right(self, screen):
+        if self.wall_iter + 1 >= 30:
+            self.wall_iter = 0
+        delta = (self.sonic_wall_right[self.wall_iter // 10].get_width() - TILE_SIZE) // 2
+        screen.blit(self.sonic_wall_right[self.wall_iter // 10], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+        self.wall_iter += 1
+
+    def render_wall_stop_left(self, screen):
+        if self.wall_iter + 1 >= 30:
+            self.wall_iter = 0
+        delta = (self.sonic_wall_left[self.wall_iter // 10].get_width() - TILE_SIZE) // 2
+        screen.blit(self.sonic_wall_left[self.wall_iter // 10], (self.x * TILE_SIZE - delta, self.y * TILE_SIZE - delta))
+        self.wall_iter += 1
 
     def render_left_run(self, screen):
         if self.anim_iter + 1 >= 30:
