@@ -9,7 +9,7 @@ from camera import Camera
 
 MAPS_DIR = 'maps'
 pygame.init()
-SIZE = WIDTH, HEIGHT = 1200, 600
+SIZE = WIDTH, HEIGHT = 1200, 1000
 SCREEN = pygame.display.set_mode(SIZE)
 TILE_SIZE = 40
 FPS = 30
