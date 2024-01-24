@@ -75,13 +75,14 @@ class Sonic:
         self.x, self.y = position
 
     def render_start_sonic(self, screen):
-        if self.cur_frame != 300:
-            self.cur_frame += 30 / FPS
-            needed_frame = self.cur_frame // 20
+        if self.cur_frame < 15:
+            self.cur_frame += 10 / FPS
+            needed_frame = self.cur_frame
+            print(needed_frame)
             image = self.start_screen_sonic[int(needed_frame)]
         else:
-            self.last_two = self.last_two + 30 / FPS
-            needed_frame = (self.last_two // 25) % 2
+            self.last_two = self.last_two + 5 / FPS
+            needed_frame = self.last_two % 2
             image = self.start_screen_sonic_last[int(needed_frame)]
         screen.blit(image, (WIDTH * 10 / 39, HEIGHT // 15))
 
