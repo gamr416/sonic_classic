@@ -106,6 +106,7 @@ class Game:
                 self.sonic.render_idle_right(screen)
 
 
+
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
@@ -120,6 +121,7 @@ class Game:
         title_sound.play()
         title_sound.set_volume(0.1)
         start_ticks = pygame.time.get_ticks()
+        clock = pygame.time.Clock()
         while starting:
             starting_seconds = (pygame.time.get_ticks() - start_ticks) // 100
             self.bg_pic_x -= 20 / FPS
@@ -144,6 +146,8 @@ class Game:
                 if event.type == pygame.QUIT:
                     starting = False
                     running = False
+            pygame.display.update()
+            clock.tick(FPS)
             pygame.display.flip()
         title_sound.stop()
         clock = pygame.time.Clock()
