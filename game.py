@@ -40,6 +40,7 @@ class Game:
         self.playing_seconds = 0
         self.time_flag = False
         self.health_flag = False
+        self.invincibility = False
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -162,7 +163,9 @@ class Game:
         playing_ticks = pygame.time.get_ticks()
         SCREEN.fill((0, 0, 0))
         finish_ticks = pygame.time.get_ticks()
+        invincibility_tick = pygame.time.get_ticks()
         while running:
+            invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
             map_next_x = next_x - self.world_offset[0] / TILE_SIZE + 0.5
             map_next_y = next_y - self.world_offset[1] / TILE_SIZE
             if finishing:
@@ -271,6 +274,19 @@ class Game:
                     #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
                 if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
+                if self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP and self.ring_amount == 0 and not self.invincibility:
+                    running = False
+                    gh_sound.stop()
+                    self.health_flag = True
+                    ending = True
+                elif self.invincibility and self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP:
+                    pass
+                elif self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP and self.ring_amount > 0:
+                    self.ring_amount = 0
+                    self.invincibility = True
+                    invincibility_tick = pygame.time.get_ticks()
+                if invincibility_seconds > 200 and self.invincibility:
+                    self.invincibility = False
                     # if self.last_way == 'RIGHT':
                     #     if self.counter_way > self.MAX_COUNTER_WAY:
                     #         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS

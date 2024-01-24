@@ -78,7 +78,6 @@ class Sonic:
         if self.cur_frame < 15:
             self.cur_frame += 10 / FPS
             needed_frame = self.cur_frame
-            print(needed_frame)
             image = self.start_screen_sonic[int(needed_frame)]
         else:
             self.last_two = self.last_two + 5 / FPS
