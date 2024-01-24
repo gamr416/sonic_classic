@@ -285,7 +285,8 @@ class Game:
                     self.ring_amount = 0
                     self.invincibility = True
                     invincibility_tick = pygame.time.get_ticks()
-                if invincibility_seconds > 50 and self.invincibility:
+                    invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
+                if invincibility_seconds > 20 and self.invincibility:
                     self.invincibility = False
                     # if self.last_way == 'RIGHT':
                     #     if self.counter_way > self.MAX_COUNTER_WAY:
@@ -483,7 +484,7 @@ class Game:
                 ending = False
                 starting = True
                 running = True
-                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 6), self.sonic)
+                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 1), self.sonic)
                 # self.left = False
                 # self.last_left = False
                 # self.right = False
