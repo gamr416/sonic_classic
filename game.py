@@ -38,6 +38,8 @@ class Game:
         self.finish_font = pygame.font.Font('font/sonic-press-start-button.otf', 40)
         self.back_finish_font = pygame.font.Font('font/sonic-press-start-button.otf', 40)
         self.playing_seconds = 0
+        self.time_flag = False
+        self.health_flag = False
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -131,7 +133,7 @@ class Game:
             SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
             SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
             self.sonic.render_start_sonic(SCREEN)
-            if starting_seconds >= 5:
+            if starting_seconds >= 50:
                 font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
                 text = font.render('PRESS SPACE TO START', True, (255, 255, 0))
                 text_rect = text.get_rect(center=(WIDTH / 40 * 19, HEIGHT / 40 * 31))
@@ -236,6 +238,7 @@ class Game:
                 if self.playing_seconds >= 6000:
                     running = False
                     gh_sound.stop()
+                    self.time_flag = True
                     ending = True
                 if self.JUMP:
                     if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
@@ -428,16 +431,54 @@ class Game:
 
         over_sound.play()
         over_sound.set_volume(0.1)
+        ending_ticks = pygame.time.get_ticks()
         while ending:
-            font = pygame.font.Font('font/sonic-press-start-button.otf', 30)
-            text = font.render(f'TIME OVER', True, (255, 255, 0))
-            text_rect = text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
-            SCREEN.blit(text, text_rect)
-            pygame.display.flip()
+            ending_seconds = (pygame.time.get_ticks() - ending_ticks) // 100
+            if self.time_flag:
+                font = pygame.font.Font('font/sonic-press-start-button.otf', 30)
+                text = font.render(f'TIME OVER', True, (255, 255, 0))
+                lower_text = font.render(f'TIME OVER', True, (0, 0, 0))
+                text_rect = text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+                lower_text_rect = lower_text.get_rect(center=(WIDTH / 2 + 2, HEIGHT / 2 + 2))
+                SCREEN.blit(lower_text, lower_text_rect)
+                SCREEN.blit(text, text_rect)
+            elif self.health_flag:
+                font = pygame.font.Font('font/sonic-press-start-button.otf', 30)
+                text = font.render(f'GAME OVER', True, (255, 255, 0))
+                lower_text = font.render(f'GAME OVER', True, (0, 0, 0))
+                text_rect = text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+                lower_text_rect = lower_text.get_rect(center=(WIDTH / 2 + 2, HEIGHT / 2 + 2))
+                SCREEN.blit(lower_text, lower_text_rect)
+                SCREEN.blit(text, text_rect)
+            if ending_seconds > 60:
+                restart_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
+                restart_text = restart_font.render(f'TO RESTART PRESS SPACE', True, (255, 255, 0))
+                lower_restart_text = restart_font.render(f'TO RESTART PRESS SPACE', True, (0, 0, 0))
+                lower_restart_text_rect = lower_restart_text.get_rect(center=(WIDTH / 2 + 2, HEIGHT / 2 + 52))
+                text_rect = restart_text.get_rect(center=(WIDTH / 2, HEIGHT / 2 + 50))
+                SCREEN.blit(lower_restart_text, lower_restart_text_rect)
+                SCREEN.blit(restart_text, text_rect)
+            if pygame.key.get_pressed()[pygame.K_SPACE] and ending_seconds > 60:
+                over_sound.stop()
+                ending = False
+                starting = True
+                running = True
+                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 6), self.sonic)
+                # self.left = False
+                # self.last_left = False
+                # self.right = False
+                # self.last_right = True
+                # self.last_way = None
+                # self.JUMP = False
+                # self.fall_after_jump = False
+                # self.down = False
+                # self.world_offset = [0, -560]
+
+                self.update_sonic()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     ending = False
-            self.render(SCREEN)
+            pygame.display.flip()
         pygame.display.update()
         clock.tick(FPS)
 
