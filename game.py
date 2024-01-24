@@ -213,7 +213,7 @@ class Game:
                     if finish_seconds > 120 and event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
                             finishing = False
-                            self.map = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 6)
+                            self.map = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 1)
                             self.world_offset = [0, -520]
                             finish_ticks = pygame.time.get_ticks()
                             gh_sound.set_volume(0.1)
