@@ -285,7 +285,7 @@ class Game:
                     self.ring_amount = 0
                     self.invincibility = True
                     invincibility_tick = pygame.time.get_ticks()
-                if invincibility_seconds > 200 and self.invincibility:
+                if invincibility_seconds > 50 and self.invincibility:
                     self.invincibility = False
                     # if self.last_way == 'RIGHT':
                     #     if self.counter_way > self.MAX_COUNTER_WAY:
@@ -414,7 +414,7 @@ class Game:
                     self.ring_amount += 1
                     ring_sound.play()
                     ring_sound.set_volume(0.1)
-                    self.map.map.layers[0].data[int(map_next_y)][int(map_next_x)] = 2
+                    self.map.map.layers[0].data[int(map_next_y)][int(map_next_x)] = 0
                 if self.map.get_tile_id((map_next_x, map_next_y)) in self.map.finish_tiles:
                     # self.map = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 6)
                     # self.world_offset = [0, -520]
