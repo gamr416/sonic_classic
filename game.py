@@ -381,9 +381,9 @@ class Game:
                             self.sonic.jump_iter = 0
                 upper_font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
                 lower_font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
-                time_text = upper_font.render(f"TIME {self.playing_seconds // 600}\'\' {self.playing_seconds % 600}",
+                time_text = upper_font.render(f"TIME {self.playing_seconds // 600} : {self.playing_seconds // 10 % 60}",
                                    True, (255, 255, 0))
-                lower_time_text = lower_font.render(f"TIME {self.playing_seconds // 600}\'\' {self.playing_seconds % 600}",
+                lower_time_text = lower_font.render(f"TIME {self.playing_seconds // 600} : {self.playing_seconds // 10 % 60}",
                                               True, (0, 0, 0))
                 ring_text = upper_font.render(f"RINGS {self.ring_amount}",
                                    True, (255, 255, 0))
