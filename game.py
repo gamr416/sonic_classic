@@ -245,9 +245,13 @@ class Game:
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
-                if not self.JUMP and (((self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
-                                       or (self.map.is_free((map_next_x - 0.1, map_next_y + 1.25))))):
+                if not self.JUMP and (((self.map.is_free((map_next_x, map_next_y + 1.25)))
+                                       or (self.map.is_free((map_next_x, map_next_y + 1.25))))):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
+                if not self.map.is_free((map_next_x, map_next_y + 1)):
+                    self.Jump = False
+                    self.fall_after_jump = False
+                print(self.left, self.right, self.JUMP, self.fall_after_jump)
                 if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
                      or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
                         and not self.JUMP
@@ -292,6 +296,10 @@ class Game:
                             except ValueError:
                                 pass
                     else:
+                        self.left = True
+                        self.right = False
+                        self.last_right = False
+                        self.last_left = True
                         self.counter_way += 0.05
                         if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free(
                                 (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
@@ -331,6 +339,10 @@ class Game:
                             except ValueError:
                                 pass
                     else:
+                        self.left = False
+                        self.right = True
+                        self.last_right = True
+                        self.last_left = False
                         self.counter_way += 0.05
                         if (self.counter_way > self.MAX_COUNTER_WAY
                                 and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y))):
