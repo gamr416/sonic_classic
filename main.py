@@ -28,7 +28,7 @@ def load_image(name, colorkey=None):
 if __name__ == '__main__':
     camera = Camera()
     SONIC = Sonic((10, 7))
-    MAP = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 1)
+    MAP = Map([1, 2, 16, 17], [20], [67, 134, 111, 112, 135], 1)
     game = Game(MAP, SONIC)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Conic klassik')
