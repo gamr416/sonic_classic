@@ -276,14 +276,14 @@ class Game:
                     #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
                 if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
-                if self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP and self.ring_amount == 0 and not self.invincibility:
+                if ((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17) or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17)) and not self.JUMP and self.ring_amount == 0 and not self.invincibility:
                     running = False
                     gh_sound.stop()
                     self.health_flag = True
                     ending = True
                 elif self.invincibility and self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP:
                     pass
-                elif self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP and self.ring_amount > 0:
+                elif ((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17) or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17)) and not self.JUMP and self.ring_amount > 0:
                     self.ring_amount = 0
                     self.invincibility = True
                     invincibility_tick = pygame.time.get_ticks()
