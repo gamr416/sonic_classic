@@ -43,6 +43,7 @@ class Game:
         self.invincibility = False
         self.count_invis = 0
         self.level_count = self.map.level
+        self.total_score = 0
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -51,39 +52,6 @@ class Game:
                 x_pixel = tile[0] * 40 + world_offset[0]
                 y_pixel = tile[1] * 40 + world_offset[1]
                 window.blit(img, (x_pixel, y_pixel))
-
-    # def get_tile_properties(self, tmxdata, x, y, world_offset):
-    #     world_x = x - world_offset[0]
-    #     world_y = y - world_offset[1]
-    #     tile_x = world_x // 20
-    #     tile_y = world_y // 20
-    #     layer = tmxdata.layers[0]
-    #     try:
-    #         properties = tmxdata.get_tile_properties(tile_x, tile_y, 0)
-    #     except ValueError:
-    #         properties = {'collectable': False}
-    #     if properties is None:
-    #         properties = {'collectable': False}
-    #     return properties
-
-    # def check_jump(self):
-    #     if self.JUMP:
-    #         if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
-    #             self.world_offset[1] += 0.5 * TILE_SIZE
-    #             last_jump -= 0.5 ** count
-    #         elif 0.5 ** count >= last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
-    #             self.world_offset[1] += last_jump * TILE_SIZE
-    #             count = 1
-    #             last_jump = 5
-    #             self.JUMP = False
-    #             self.fall_after_jump = True
-    #         elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
-    #             self.JUMP = False
-    #             last_jump = 5
-    #             count = 1
-    #             self.fall_after_jump = True
-    #     if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
-    #         self.world_offset[1] -= 0.5 * TILE_SIZE
 
     def render(self, screen):
         if self.invincibility and self.count_invis % 5 == 0:
@@ -173,8 +141,12 @@ class Game:
             map_next_x = next_x - self.world_offset[0] / TILE_SIZE + 0.5
             map_next_y = next_y - self.world_offset[1] / TILE_SIZE
             if finishing:
-                finish_text = self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}', True, (255, 255, 0))
-                lower_finish_text = self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}', True, (0, 0, 0))
+                finish_text = (
+                    self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
+                                                      True, (255, 255, 0)))
+                lower_finish_text = (
+                    self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
+                                                            True, (0, 0, 0)))
                 finish_seconds = (pygame.time.get_ticks() - finish_ticks) // 100
                 self.bg_pic_x -= 20 / FPS
                 self.second_bg_x -= 20 / FPS
@@ -188,8 +160,10 @@ class Game:
                 SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
                 self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
                 self.render(SCREEN)
-                SCREEN.blit(lower_finish_text, (WIDTH // 2 - finish_text.get_width()//2 + 2, HEIGHT // 2 - finish_text.get_height()//2 + 2))
-                SCREEN.blit(finish_text, (WIDTH // 2 - finish_text.get_width()//2, HEIGHT // 2 - finish_text.get_height()//2))
+                SCREEN.blit(lower_finish_text, (WIDTH // 2 - finish_text.get_width()//2 + 2,
+                                                HEIGHT // 2 - finish_text.get_height()//2 + 2))
+                SCREEN.blit(finish_text, (WIDTH // 2 - finish_text.get_width()//2,
+                                          HEIGHT // 2 - finish_text.get_height()//2))
                 if self.JUMP:
                     if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.world_offset[1] += 0.5 * TILE_SIZE
@@ -215,10 +189,12 @@ class Game:
                         finishing = False
                     if finish_seconds > 120 and event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
+                            self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
                             self.level_count -= 1
                             if self.level_count != 0:
                                 finishing = False
-                                self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], self.level_count)
+                                self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20],
+                                               [67, 134, 111, 112, 135], self.level_count)
                                 self.world_offset = [0, -520]
                                 finish_ticks = pygame.time.get_ticks()
                                 gh_sound.set_volume(0.1)
@@ -230,12 +206,10 @@ class Game:
                                 ending = False
                                 finishing = False
                                 over = True
-
                 clock.tick(FPS)
                 pygame.display.flip()
+
             else:
-                # map_next_x = next_x - self.world_offset[0] / TILE_SIZE + 0.5
-                # map_next_y = next_y - self.world_offset[1] / TILE_SIZE
                 SCREEN.fill((0, 0, 0))
                 self.bg_pic_x -= 20 / FPS
                 self.second_bg_x -= 20 / FPS
@@ -247,7 +221,6 @@ class Game:
                     self.flag_start_bg = True
                 SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
                 SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
-                # self.map.render(SCREEN)
                 self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
                 self.render(SCREEN)
                 self.wall_stop_r = False
@@ -273,57 +246,33 @@ class Game:
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
-                    # if self.last_way == 'RIGHT':
-                    #     if self.counter_way > self.MAX_COUNTER_WAY:
-                    #         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    #     else:
-                    #         next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
-                    # elif self.last_way == 'LEFT':
-                    #     if self.counter_way > self.MAX_COUNTER_WAY:
-                    #         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    #     else:
-                    #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
-                if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
+                if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1.25)):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
-                if ((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17) or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17)) and not self.JUMP and self.ring_amount == 0 and not self.invincibility:
+                if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
+                    or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
+                        and not self.JUMP
+                        and self.ring_amount == 0
+                        and not self.invincibility):
                     running = False
                     gh_sound.stop()
                     self.health_flag = True
                     ending = True
-                elif self.invincibility and self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17 and not self.JUMP:
+                elif (self.invincibility
+                      and self.map.get_tile_id((map_next_x, map_next_y + 1)) == 17
+                      and not self.JUMP):
                     pass
-                elif ((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17) or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17)) and not self.JUMP and self.ring_amount > 0:
+                elif (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
+                      or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
+                      and not self.JUMP
+                      and self.ring_amount > 0):
                     self.ring_amount = 0
                     self.invincibility = True
                     invincibility_tick = pygame.time.get_ticks()
                     invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
                 if invincibility_seconds > 20 and self.invincibility:
                     self.invincibility = False
-                    # if self.last_way == 'RIGHT':
-                    #     if self.counter_way > self.MAX_COUNTER_WAY:
-                    #         next_x += (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    #     else:
-                    #         next_x += (2 ** (1 / 2 * self.counter_way)) / FPS
-                    # elif self.last_way == 'LEFT':
-                    #     if self.counter_way > self.MAX_COUNTER_WAY:
-                    #         next_x -= (2 ** (1 / 2 * self.MAX_COUNTER_WAY)) / FPS
-                    #     else:
-                    #         next_x -= (2 ** (1 / 2 * self.counter_way)) / FPS
                 if not self.map.is_free((map_next_x, map_next_y + 1)):
                     self.fall_after_jump = False
-                '''
-                if pygame.key.get_pressed()[pygame.K_d] and pygame.key.get_pressed()[pygame.K_SPACE] \
-                        and not self.map.is_free((next_x, next_y + 2)):
-                    JUMP = True
-                    if self.counter_way > self.MAX_COUNTER_WAY:
-                        next_x += (2 ** self.MAX_COUNTER_WAY) / FPS
-                    else:
-                        next_x += (2 ** self.counter_way) / FPS
-                if pygame.key.get_pressed()[pygame.K_a] and pygame.key.get_pressed()[pygame.K_SPACE] \
-                        and not self.map.is_free((next_x, next_y + 2)):
-                    next_y -= 3
-                    next_x -= 1
-                '''
                 if (pygame.key.get_pressed()[pygame.K_a]
                         and self.map.is_free((map_next_x, map_next_y))):
                     if self.last_way != 'LEFT':
@@ -337,7 +286,8 @@ class Game:
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
-                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
+                                                             map_next_y)):
                                         self.wall_stop_l = True
                             except ValueError:
                                 pass
@@ -353,11 +303,13 @@ class Game:
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
-                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
+                                                             map_next_y)):
                                         self.wall_stop_l = True
                                         self.counter_way = 2
                                 else:
-                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
+                                                             map_next_y)):
                                         self.wall_stop_l = True
                             except ValueError:
                                 pass
@@ -390,18 +342,16 @@ class Game:
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
-                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS,
+                                                             map_next_y)):
                                         self.wall_stop_r = True
                                         self.counter_way = 2
                                 else:
-                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS,
+                                                             map_next_y)):
                                         self.wall_stop_r = True
                             except ValueError:
                                 pass
-                    # if next_x > 15:
-                    #     self.entered_camera_move = True
-                    #     next_x = 15
-                    #     self.world_offset[0] -= 15 * TILE_SIZE
                     self.last_way = 'RIGHT'
                 else:
                     self.left = False
@@ -433,9 +383,11 @@ class Game:
                             self.sonic.jump_iter = 0
                 upper_font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
                 lower_font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
-                time_text = upper_font.render(f"TIME {self.playing_seconds // 600} : {self.playing_seconds // 10 % 60}",
+                time_text = upper_font.render(f"TIME {self.playing_seconds // 600} "
+                                              f": {self.playing_seconds // 10 % 60}",
                                    True, (255, 255, 0))
-                lower_time_text = lower_font.render(f"TIME {self.playing_seconds // 600} : {self.playing_seconds // 10 % 60}",
+                lower_time_text = lower_font.render(f"TIME {self.playing_seconds // 600} "
+                                                    f": {self.playing_seconds // 10 % 60}",
                                               True, (0, 0, 0))
                 ring_text = upper_font.render(f"RINGS {self.ring_amount}",
                                    True, (255, 255, 0))
@@ -448,8 +400,6 @@ class Game:
                     ring_sound.set_volume(0.1)
                     self.map.map.layers[0].data[int(map_next_y)][int(map_next_x)] = 0
                 if self.map.get_tile_id((map_next_x, map_next_y)) in self.map.finish_tiles:
-                    # self.map = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 6)
-                    # self.world_offset = [0, -520]q
                     finish_sound.play()
                     finish_sound.set_volume(0.2)
                     gh_sound.set_volume(0)
@@ -461,28 +411,9 @@ class Game:
                 self.sonic.set_position((next_x, next_y))
                 clock.tick(FPS)
                 pygame.display.flip()
-            # if finishing:
-            #     self.bg_pic_x -= 20 / FPS
-            #     self.second_bg_x -= 20 / FPS
-            #     if self.bg_pic_x + self.second_bg.get_width() <= WIDTH and self.flag_start_bg:
-            #         self.second_bg_x = WIDTH
-            #         self.flag_start_bg = False
-            #     if self.second_bg_x + self.bg_pic.get_width() <= WIDTH and not self.flag_start_bg:
-            #         self.bg_pic_x = WIDTH
-            #         self.flag_start_bg = True
-            #     SCREEN.blit(self.bg_pic, (self.bg_pic_x, 0))
-            #     SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
-            #     self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
-            #     self.render(SCREEN)
-            #     if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1)):
-            #         self.world_offset[1] -= 0.5 * TILE_SIZE
-            #     for event in pygame.event.get():
-            #         if event.type == pygame.QUIT:
-            #             running = False
-            #             finishing = False
-
-        over_sound.play()
-        over_sound.set_volume(0.1)
+        if ending:
+            over_sound.play()
+            over_sound.set_volume(0.1)
         ending_ticks = pygame.time.get_ticks()
         while ending:
             ending_seconds = (pygame.time.get_ticks() - ending_ticks) // 100
@@ -515,21 +446,25 @@ class Game:
                 ending = False
                 starting = True
                 running = True
-                self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], 2), self.sonic)
-                # self.left = False
-                # self.last_left = False
-                # self.right = False
-                # self.last_right = True
-                # self.last_way = None
-                # self.JUMP = False
-                # self.fall_after_jump = False
-                # self.down = False
-                # self.world_offset = [0, -560]
+                self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25],
+                                  [20], [67, 134, 111, 112, 135], 2), self.sonic)
 
                 self.update_sonic()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     ending = False
+            pygame.display.flip()
+        while over:
+            SCREEN.fill((0, 0, 0))
+            end_font = pygame.font.Font('font/sonic-press-start-button.otf', 50)
+            end_text = end_font.render("THANKS FOR PLAYING", True, (255, 255, 0))
+            end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
+            end_score = end_score_font.render(f"TOTAL SCORE {self.total_score}", True, (255, 255, 0))
+            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width(), HEIGHT // 2 - end_text.get_width()))
+            SCREEN.blit(end_score, (WIDTH // 2, HEIGHT // 2))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    over = False
             pygame.display.flip()
         pygame.display.update()
         clock.tick(FPS)
