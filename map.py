@@ -13,6 +13,7 @@ class Map:
         self.solid_tiles = bad_tiles
         self.finish_tiles = finish_tiles
         self.ring_tiles = ring_tiles
+        self.level = level
 
     def render(self, screen):
         for y in range(self.height):

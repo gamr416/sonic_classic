@@ -42,6 +42,7 @@ class Game:
         self.health_flag = False
         self.invincibility = False
         self.count_invis = 0
+        self.level_count = self.map.level
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -121,6 +122,7 @@ class Game:
         running = True
         ending = False
         finishing = False
+        over = False
         title_sound.play()
         title_sound.set_volume(0.1)
         start_ticks = pygame.time.get_ticks()
@@ -171,7 +173,6 @@ class Game:
             map_next_x = next_x - self.world_offset[0] / TILE_SIZE + 0.5
             map_next_y = next_y - self.world_offset[1] / TILE_SIZE
             if finishing:
-
                 finish_text = self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}', True, (255, 255, 0))
                 lower_finish_text = self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}', True, (0, 0, 0))
                 finish_seconds = (pygame.time.get_ticks() - finish_ticks) // 100
@@ -214,13 +215,21 @@ class Game:
                         finishing = False
                     if finish_seconds > 120 and event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
-                            finishing = False
-                            self.map = Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 1)
-                            self.world_offset = [0, -520]
-                            finish_ticks = pygame.time.get_ticks()
-                            gh_sound.set_volume(0.1)
-                            self.ring_amount = 0
-                            playing_ticks = pygame.time.get_ticks()
+                            self.level_count -= 1
+                            if self.level_count != 0:
+                                finishing = False
+                                self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], self.level_count)
+                                self.world_offset = [0, -520]
+                                finish_ticks = pygame.time.get_ticks()
+                                gh_sound.set_volume(0.1)
+                                self.ring_amount = 0
+                                playing_ticks = pygame.time.get_ticks()
+                            else:
+                                starting = False
+                                running = False
+                                ending = False
+                                finishing = False
+                                over = True
 
                 clock.tick(FPS)
                 pygame.display.flip()
@@ -506,7 +515,7 @@ class Game:
                 ending = False
                 starting = True
                 running = True
-                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 2), self.sonic)
+                self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], 2), self.sonic)
                 # self.left = False
                 # self.last_left = False
                 # self.right = False
