@@ -41,6 +41,7 @@ class Game:
         self.time_flag = False
         self.health_flag = False
         self.invincibility = False
+        self.count_invis = 0
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -84,7 +85,9 @@ class Game:
     #         self.world_offset[1] -= 0.5 * TILE_SIZE
 
     def render(self, screen):
-        if (self.JUMP or self.fall_after_jump) and self.last_right:
+        if self.invincibility and self.count_invis % 5 == 0:
+            pass
+        elif (self.JUMP or self.fall_after_jump) and self.last_right:
             self.sonic.render_jump_right(screen)
         elif (self.JUMP or self.fall_after_jump) and self.last_left:
             self.sonic.render_jump_left(screen)
@@ -105,6 +108,7 @@ class Game:
                 self.sonic.render_idle_left(screen)
             elif self.last_right:
                 self.sonic.render_idle_right(screen)
+        self.count_invis += 2
 
 
 
