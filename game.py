@@ -246,7 +246,8 @@ class Game:
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
-                if not self.JUMP and self.map.is_free((map_next_x, map_next_y + 1.25)):
+                if not self.JUMP and (((self.map.is_free((map_next_x + 0.25, map_next_y + 1.25)))
+                    or (self.map.is_free((map_next_x - 0.25, map_next_y + 1.25))))):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
                 if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
                     or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
@@ -460,8 +461,8 @@ class Game:
             end_text = end_font.render("THANKS FOR PLAYING", True, (255, 255, 0))
             end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
             end_score = end_score_font.render(f"TOTAL SCORE {self.total_score}", True, (255, 255, 0))
-            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width(), HEIGHT // 2 - end_text.get_width()))
-            SCREEN.blit(end_score, (WIDTH // 2, HEIGHT // 2))
+            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width()//2, HEIGHT // 2 - end_text.get_height()))
+            SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 - end_score.get_height() // 2))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     over = False
