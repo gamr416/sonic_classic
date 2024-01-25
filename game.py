@@ -506,7 +506,7 @@ class Game:
                 ending = False
                 starting = True
                 running = True
-                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 1), self.sonic)
+                self.__init__(Map([1, 2, 16, 17], [20], [87, 88, 63, 64], 2), self.sonic)
                 # self.left = False
                 # self.last_left = False
                 # self.right = False
