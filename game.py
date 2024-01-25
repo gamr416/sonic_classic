@@ -1,7 +1,6 @@
 import pygame
 from map import Map
 
-
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
 FPS = 30
@@ -143,10 +142,10 @@ class Game:
             if finishing:
                 finish_text = (
                     self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
-                                                      True, (255, 255, 0)))
+                                            True, (255, 255, 0)))
                 lower_finish_text = (
                     self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
-                                                            True, (0, 0, 0)))
+                                            True, (0, 0, 0)))
                 finish_seconds = (pygame.time.get_ticks() - finish_ticks) // 100
                 self.bg_pic_x -= 20 / FPS
                 self.second_bg_x -= 20 / FPS
@@ -160,10 +159,10 @@ class Game:
                 SCREEN.blit(self.second_bg, (self.second_bg_x, 0))
                 self.blit_all_tiles(SCREEN, self.map.map, self.world_offset)
                 self.render(SCREEN)
-                SCREEN.blit(lower_finish_text, (WIDTH // 2 - finish_text.get_width()//2 + 2,
-                                                HEIGHT // 2 - finish_text.get_height()//2 + 2))
-                SCREEN.blit(finish_text, (WIDTH // 2 - finish_text.get_width()//2,
-                                          HEIGHT // 2 - finish_text.get_height()//2))
+                SCREEN.blit(lower_finish_text, (WIDTH // 2 - finish_text.get_width() // 2 + 2,
+                                                HEIGHT // 2 - finish_text.get_height() // 2 + 2))
+                SCREEN.blit(finish_text, (WIDTH // 2 - finish_text.get_width() // 2,
+                                          HEIGHT // 2 - finish_text.get_height() // 2))
                 if self.JUMP:
                     if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.world_offset[1] += 0.5 * TILE_SIZE
@@ -246,11 +245,11 @@ class Game:
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
-                if not self.JUMP and (((self.map.is_free((map_next_x + 0.25, map_next_y + 1.25)))
-                    or (self.map.is_free((map_next_x - 0.25, map_next_y + 1.25))))):
+                if not self.JUMP and (((self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
+                                       or (self.map.is_free((map_next_x - 0.1, map_next_y + 1.25))))):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
                 if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
-                    or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
+                     or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
                         and not self.JUMP
                         and self.ring_amount == 0
                         and not self.invincibility):
@@ -263,7 +262,7 @@ class Game:
                       and not self.JUMP):
                     pass
                 elif (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
-                      or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
+                       or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
                       and not self.JUMP
                       and self.ring_amount > 0):
                     self.ring_amount = 0
@@ -386,14 +385,14 @@ class Game:
                 lower_font = pygame.font.Font('font/sonic-1-hud-font.ttf', 25)
                 time_text = upper_font.render(f"TIME {self.playing_seconds // 600} "
                                               f": {self.playing_seconds // 10 % 60}",
-                                   True, (255, 255, 0))
+                                              True, (255, 255, 0))
                 lower_time_text = lower_font.render(f"TIME {self.playing_seconds // 600} "
                                                     f": {self.playing_seconds // 10 % 60}",
-                                              True, (0, 0, 0))
+                                                    True, (0, 0, 0))
                 ring_text = upper_font.render(f"RINGS {self.ring_amount}",
-                                   True, (255, 255, 0))
+                                              True, (255, 255, 0))
                 lower_ring_text = lower_font.render(f"RINGS {self.ring_amount}",
-                                   True, (0, 0, 0))
+                                                    True, (0, 0, 0))
                 if self.map.get_tile_id((map_next_x, map_next_y)) in self.map.ring_tiles:
                     ring_sound.stop()
                     self.ring_amount += 1
@@ -461,7 +460,7 @@ class Game:
             end_text = end_font.render("THANKS FOR PLAYING", True, (255, 255, 0))
             end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
             end_score = end_score_font.render(f"TOTAL SCORE {self.total_score}", True, (255, 255, 0))
-            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width()//2, HEIGHT // 2 - end_text.get_height()))
+            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width() // 2, HEIGHT // 2 - end_text.get_height()))
             SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 - end_score.get_height() // 2))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
