@@ -110,8 +110,6 @@ class Game:
                 self.sonic.render_idle_right(screen)
         self.count_invis += 2
 
-
-
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
         title_sound = pygame.mixer.Sound('music/Titlemus.MP3')
@@ -255,7 +253,7 @@ class Game:
                     if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.world_offset[1] += 0.5 * TILE_SIZE
                         last_jump -= 0.5 ** count
-                    elif 0.5 ** count >= last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
+                    elif 0.5 ** count >= last_jump and self.map.is_free((map_next_x, map_next_y - last_jump ** count)):
                         self.world_offset[1] += last_jump * TILE_SIZE
                         count = 1
                         last_jump = 5
@@ -325,27 +323,35 @@ class Game:
                         self.right = False
                         self.last_right = False
                         self.last_left = True
-                        if self.map.is_free((map_next_x - 4 / FPS, map_next_y)):
+                        if self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
                             self.world_offset[0] += 4 * TILE_SIZE / FPS
+                        else:
+                            try:
+                                if self.counter_way >= self.MAX_COUNTER_WAY:
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                        self.wall_stop_l = True
+                            except ValueError:
+                                pass
                     else:
                         self.counter_way += 0.05
                         if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free(
                                 (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                            self.counter_way = 4
                             self.world_offset[0] += (2 ** self.MAX_COUNTER_WAY) * TILE_SIZE / FPS
                         elif self.counter_way < self.MAX_COUNTER_WAY and self.map.is_free(
-                                (map_next_x - (2 ** self.counter_way) / FPS, map_next_y)):
+                                (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
                             self.world_offset[0] += (2 ** self.counter_way) * TILE_SIZE / FPS
                         else:
                             try:
-                                if not self.map.is_free((map_next_x - (2 ** self.counter_way) / FPS, map_next_y)):
-                                    self.wall_stop_l = True
-                                    self.counter_way = 2
+                                if self.counter_way >= self.MAX_COUNTER_WAY:
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                        self.wall_stop_l = True
+                                        self.counter_way = 2
+                                else:
+                                    if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                        self.wall_stop_l = True
                             except ValueError:
                                 pass
-
-                    # if next_x < 15 and self.entered_camera_move:
-                    #     next_x = 15
-                    #     self.world_offset[0] += 10
                     self.last_way = 'LEFT'
                 elif (pygame.key.get_pressed()[pygame.K_d]
                       and self.map.is_free((map_next_x, map_next_y))):
@@ -355,19 +361,32 @@ class Game:
                         self.right = True
                         self.last_right = True
                         self.last_left = False
-                        if self.map.is_free((map_next_x + 4 / FPS, map_next_y)):
-                            self.world_offset[0] -= 4 * TILE_SIZE / FPS
-                    else:
-                        self.counter_way += 0.05
-                        if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
-                            self.world_offset[0] -= (2 ** self.MAX_COUNTER_WAY) * TILE_SIZE / FPS
-                        elif self.counter_way < self.MAX_COUNTER_WAY and self.map.is_free((map_next_x + (2 ** self.counter_way) / FPS, map_next_y)):
-                            self.world_offset[0] -= (2 ** self.counter_way) * TILE_SIZE / FPS
+                        if self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                            self.world_offset[0] -= 3 * TILE_SIZE / FPS
                         else:
                             try:
-                                if not self.map.is_free((map_next_x + (2 ** self.counter_way) / FPS, map_next_y)):
+                                if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
                                     self.wall_stop_r = True
-                                    self.counter_way = 2
+                            except ValueError:
+                                pass
+                    else:
+                        self.counter_way += 0.05
+                        if (self.counter_way > self.MAX_COUNTER_WAY
+                                and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y))):
+                            self.world_offset[0] -= (2 ** self.MAX_COUNTER_WAY * TILE_SIZE) / FPS
+                            self.counter_way = 4
+                        elif (self.counter_way < self.MAX_COUNTER_WAY
+                              and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y))):
+                            self.world_offset[0] -= (2 ** self.counter_way * TILE_SIZE) / FPS
+                        else:
+                            try:
+                                if self.counter_way >= self.MAX_COUNTER_WAY:
+                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                        self.wall_stop_r = True
+                                        self.counter_way = 2
+                                else:
+                                    if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                        self.wall_stop_r = True
                             except ValueError:
                                 pass
                     # if next_x > 15:
@@ -378,7 +397,6 @@ class Game:
                 else:
                     self.left = False
                     self.right = False
-
                 if (pygame.key.get_pressed()[pygame.K_s]
                         and not pygame.key.get_pressed()[pygame.K_SPACE]
                         and not self.map.is_free((map_next_x, map_next_y + 1))
