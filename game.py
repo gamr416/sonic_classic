@@ -196,7 +196,7 @@ class Game:
                             self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
                             self.level_count += 1
                             print(self.level_count)
-                            if self.level_count != 3:
+                            if self.level_count != 4:
                                 finishing = False
                                 self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20],
                                                [67, 134, 111, 112, 135], self.level_count)
@@ -286,36 +286,17 @@ class Game:
                       and not self.invincibility):
                     self.ring_amount = 0
                     self.invincibility = True
-                    # self.get_damaged = True
-                    # self.damaged_way = self.last_right
                     invincibility_tick = pygame.time.get_ticks()
                     invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
-                # if self.get_damaged:
-                #     if 0.5 ** self.count_damage_jump < self.damaged_height and self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
-                #         self.world_offset[1] += 0.5 * TILE_SIZE
-                #         self.damaged_height -= 0.5 ** self.count_damage_jump
-                #     elif 0.5 ** self.count_damage_jump >= self.damaged_height and self.map.is_free(
-                #             (map_next_x, map_next_y - self.damaged_height ** self.count_damage_jump)):
-                #         self.world_offset[1] += self.damaged_height * TILE_SIZE
-                #         self.count_damage_jump = 1
-                #         self.damaged_height = 5
-                #         self.JUMP = False
-                #         self.fall_after_damage = True
-                #         self.get_damaged = False
-                #     elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
-                #         self.JUMP = False
-                #         self.damaged_height = 5
-                #         self.count_damage_jump = 1
-                #         self.JUMP = False
-                #         self.get_damaged = False
-                #     if self.damaged_way:
-                #         pass
                 if invincibility_seconds > 20 and self.invincibility:
                     self.invincibility = False
-                if not self.map.is_free((map_next_x, map_next_y + 1)):
+                if not self.map.is_free((map_next_x, map_next_y)):
                     self.fall_after_jump = False
                 if (pygame.key.get_pressed()[pygame.K_a]
-                        and self.map.is_free((map_next_x, map_next_y))):
+                        and self.map.is_free((map_next_x, map_next_y))
+                        and self.map.is_free((map_next_x - 0.25, map_next_y))
+                        # Сделал Дима
+                        and self.map.is_free((map_next_x - 0.25, map_next_y + 0.25))):
                     if self.last_way != 'LEFT':
                         self.counter_way = 2
                         self.left = True
@@ -323,7 +304,7 @@ class Game:
                         self.last_right = False
                         self.last_left = True
                         if self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
-                            self.world_offset[0] += 4 * TILE_SIZE / FPS
+                            self.world_offset[0] += 3 * TILE_SIZE / FPS
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
@@ -359,8 +340,12 @@ class Game:
                             except ValueError:
                                 pass
                     self.last_way = 'LEFT'
+
                 elif (pygame.key.get_pressed()[pygame.K_d]
-                      and self.map.is_free((map_next_x, map_next_y))):
+                      and self.map.is_free((map_next_x, map_next_y))
+                      and self.map.is_free((map_next_x + 0.25, map_next_y))
+                      # Сделал Дима
+                      and self.map.is_free((map_next_x + 0.25, map_next_y + 0.25))):
                     if self.last_way != 'RIGHT':
                         self.counter_way = 2
                         self.left = False
@@ -414,16 +399,8 @@ class Game:
 
                 if not pygame.key.get_pressed()[pygame.K_s]:
                     self.down = False
-
-                # if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
-                #         (map_next_x, map_next_y + 1)):
-                #     self.world_offset[1] -= 1 * TILE_SIZE / FPS
-
                 if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                     self.last_way = None
-
-                # for bug in self.motobugs:
-                #     bug.away_x =
                 print(self.world_offset)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
