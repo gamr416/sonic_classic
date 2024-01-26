@@ -43,6 +43,13 @@ class Game:
         self.count_invis = 0
         self.level_count = self.map.level
         self.total_score = 0
+        # self.get_damaged = False
+        # self.damaged_way = False
+        # self.damage_length = 8
+        # self.damaged_height = 4
+        # self.fall_after_damage = False
+        # self.count_damage_jump = 1
+        self.fall = True
 
     def blit_all_tiles(self, window, tmxdata, world_offset):
         for layer in tmxdata:
@@ -126,7 +133,7 @@ class Game:
         next_x, next_y = self.sonic.get_position()
         map_next_x, map_next_y = next_x, next_y
         jump_height = 6
-        last_jump = 5
+        last_jump = 6
         max_jump = False
         count = 1
         gh_sound.play(-1)
@@ -172,9 +179,11 @@ class Game:
                         count = 1
                         last_jump = 5
                         self.JUMP = False
+                        self.fall = True
                         self.fall_after_jump = True
                     elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.JUMP = False
+                        self.fall = True
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
@@ -234,22 +243,31 @@ class Game:
                     if 0.5 ** count < last_jump and self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.world_offset[1] += 0.5 * TILE_SIZE
                         last_jump -= 0.5 ** count
+                        self.fall = False
                     elif 0.5 ** count >= last_jump and self.map.is_free((map_next_x, map_next_y - last_jump ** count)):
                         self.world_offset[1] += last_jump * TILE_SIZE
                         count = 1
                         last_jump = 5
                         self.JUMP = False
                         self.fall_after_jump = True
+                        self.fall = True
                     elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** count)):
                         self.JUMP = False
                         last_jump = 5
                         count = 1
                         self.fall_after_jump = True
-                if not self.JUMP and (((self.map.is_free((map_next_x, map_next_y + 1.25)))
+                        self.fall = True
+                if not self.JUMP and ((( not self.map.is_free((map_next_x + 0.25, map_next_y + 1.25)))
+                                       or (not self.map.is_free((map_next_x - 0.25, map_next_y + 1.25))))):
+                    self.Jump = False
+                    self.fall = False
+                    self.fall_after_jump = False
+                elif not self.JUMP and (((self.map.is_free((map_next_x, map_next_y + 1.25)))
                                        or (self.map.is_free((map_next_x, map_next_y + 1.25))))):
                     self.world_offset[1] -= 0.5 * TILE_SIZE
                 if not self.map.is_free((map_next_x, map_next_y + 1)):
                     self.Jump = False
+                    self.fall = False
                     self.fall_after_jump = False
                 print(self.left, self.right, self.JUMP, self.fall_after_jump)
                 if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
@@ -268,11 +286,34 @@ class Game:
                 elif (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
                        or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
                       and not self.JUMP
-                      and self.ring_amount > 0):
+                      and self.ring_amount > 0
+                      and not self.invincibility):
                     self.ring_amount = 0
                     self.invincibility = True
+                    # self.get_damaged = True
+                    # self.damaged_way = self.last_right
                     invincibility_tick = pygame.time.get_ticks()
                     invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
+                # if self.get_damaged:
+                #     if 0.5 ** self.count_damage_jump < self.damaged_height and self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
+                #         self.world_offset[1] += 0.5 * TILE_SIZE
+                #         self.damaged_height -= 0.5 ** self.count_damage_jump
+                #     elif 0.5 ** self.count_damage_jump >= self.damaged_height and self.map.is_free(
+                #             (map_next_x, map_next_y - self.damaged_height ** self.count_damage_jump)):
+                #         self.world_offset[1] += self.damaged_height * TILE_SIZE
+                #         self.count_damage_jump = 1
+                #         self.damaged_height = 5
+                #         self.JUMP = False
+                #         self.fall_after_damage = True
+                #         self.get_damaged = False
+                #     elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
+                #         self.JUMP = False
+                #         self.damaged_height = 5
+                #         self.count_damage_jump = 1
+                #         self.JUMP = False
+                #         self.get_damaged = False
+                #     if self.damaged_way:
+                #         pass
                 if invincibility_seconds > 20 and self.invincibility:
                     self.invincibility = False
                 if not self.map.is_free((map_next_x, map_next_y + 1)):
@@ -285,13 +326,13 @@ class Game:
                         self.right = False
                         self.last_right = False
                         self.last_left = True
-                        if self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                        if self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
                             self.world_offset[0] += 4 * TILE_SIZE / FPS
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
                                     if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
-                                                             map_next_y)):
+                                                             map_next_y + 0.5)):
                                         self.wall_stop_l = True
                             except ValueError:
                                 pass
@@ -302,22 +343,22 @@ class Game:
                         self.last_left = True
                         self.counter_way += 0.05
                         if self.counter_way > self.MAX_COUNTER_WAY and self.map.is_free(
-                                (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
                             self.counter_way = 4
                             self.world_offset[0] += (2 ** self.MAX_COUNTER_WAY) * TILE_SIZE / FPS
                         elif self.counter_way < self.MAX_COUNTER_WAY and self.map.is_free(
-                                (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                (map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
                             self.world_offset[0] += (2 ** self.counter_way) * TILE_SIZE / FPS
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
                                     if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
-                                                             map_next_y)):
+                                                             map_next_y + 0.5)):
                                         self.wall_stop_l = True
                                         self.counter_way = 2
                                 else:
                                     if not self.map.is_free((map_next_x - (2 ** self.MAX_COUNTER_WAY) / FPS,
-                                                             map_next_y)):
+                                                             map_next_y + 0.5)):
                                         self.wall_stop_l = True
                             except ValueError:
                                 pass
@@ -330,11 +371,11 @@ class Game:
                         self.right = True
                         self.last_right = True
                         self.last_left = False
-                        if self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                        if self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
                             self.world_offset[0] -= 3 * TILE_SIZE / FPS
                         else:
                             try:
-                                if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y)):
+                                if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
                                     self.wall_stop_r = True
                             except ValueError:
                                 pass
@@ -345,22 +386,22 @@ class Game:
                         self.last_left = False
                         self.counter_way += 0.05
                         if (self.counter_way > self.MAX_COUNTER_WAY
-                                and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y))):
+                                and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5))):
                             self.world_offset[0] -= (2 ** self.MAX_COUNTER_WAY * TILE_SIZE) / FPS
                             self.counter_way = 4
                         elif (self.counter_way < self.MAX_COUNTER_WAY
-                              and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y))):
+                              and self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5))):
                             self.world_offset[0] -= (2 ** self.counter_way * TILE_SIZE) / FPS
                         else:
                             try:
                                 if self.counter_way >= self.MAX_COUNTER_WAY:
                                     if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS,
-                                                             map_next_y)):
+                                                             map_next_y + 0.5)):
                                         self.wall_stop_r = True
                                         self.counter_way = 2
                                 else:
                                     if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS,
-                                                             map_next_y)):
+                                                             map_next_y + 0.5)):
                                         self.wall_stop_r = True
                             except ValueError:
                                 pass
