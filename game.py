@@ -196,6 +196,7 @@ class Game:
                         if event.key == pygame.K_SPACE:
                             self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
                             self.level_count += 1
+                            print(self.level_count)
                             if self.level_count != 3:
                                 finishing = False
                                 self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20],
