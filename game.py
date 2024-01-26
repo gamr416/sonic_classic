@@ -257,8 +257,8 @@ class Game:
                         count = 1
                         self.fall_after_jump = True
                         self.fall = True
-                if not self.JUMP and ((( not self.map.is_free((map_next_x + 0.25, map_next_y + 1.25)))
-                                       or (not self.map.is_free((map_next_x - 0.25, map_next_y + 1.25))))):
+                if not self.JUMP and ((( not self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
+                                       or (not self.map.is_free((map_next_x - 0.1, map_next_y + 1.25))))):
                     self.Jump = False
                     self.fall = False
                     self.fall_after_jump = False
@@ -269,7 +269,6 @@ class Game:
                     self.Jump = False
                     self.fall = False
                     self.fall_after_jump = False
-                print(self.left, self.right, self.JUMP, self.fall_after_jump)
                 if (((self.map.get_tile_id((map_next_x + 0.25, map_next_y + 1)) == 17)
                      or (self.map.get_tile_id((map_next_x - 0.25, map_next_y + 1)) == 17))
                         and not self.JUMP
