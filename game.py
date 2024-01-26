@@ -195,8 +195,8 @@ class Game:
                     if finish_seconds > 120 and event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
                             self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
-                            self.level_count -= 1
-                            if self.level_count != 0:
+                            self.level_count += 1
+                            if self.level_count != 3:
                                 finishing = False
                                 self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20],
                                                [67, 134, 111, 112, 135], self.level_count)
@@ -509,7 +509,7 @@ class Game:
             end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
             end_score = end_score_font.render(f"TOTAL SCORE {self.total_score}", True, (255, 255, 0))
             SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width() // 2, HEIGHT // 2 - end_text.get_height()))
-            SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 - end_score.get_height() // 2))
+            SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 + 100))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     over = False
