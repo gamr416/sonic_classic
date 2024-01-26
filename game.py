@@ -1,5 +1,6 @@
 import pygame
 from map import Map
+import random
 
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
@@ -8,7 +9,7 @@ TILE_SIZE = 40
 
 
 class Game:
-    def __init__(self, map, sonic):
+    def __init__(self, map, sonic, mob):
         self.map = map
         self.sonic = sonic
         self.left = False
@@ -43,16 +44,10 @@ class Game:
         self.count_invis = 0
         self.level_count = self.map.level
         self.total_score = 0
-        # self.get_damaged = False
-        # self.damaged_way = False
-        # self.damage_length = 8
-        # self.damaged_height = 4
-        # self.fall_after_damage = False
-        # self.count_damage_jump = 1
-        self.fall = True
+        self.motobug = mob
 
-    def blit_all_tiles(self, window, tmxdata, world_offset):
-        for layer in tmxdata:
+    def blit_all_tiles(self, window, map, world_offset):
+        for layer in map:
             for tile in layer.tiles():
                 img = pygame.transform.scale(tile[2], (40, 40))
                 x_pixel = tile[0] * 40 + world_offset[0]
@@ -84,6 +79,8 @@ class Game:
             elif self.last_right:
                 self.sonic.render_idle_right(screen)
         self.count_invis += 2
+
+        self.motobug.render1_right(SCREEN)
 
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
@@ -499,8 +496,7 @@ class Game:
                 starting = True
                 running = True
                 self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25],
-                                  [20], [67, 134, 111, 112, 135], 2), self.sonic)
-
+                                  [20], [67, 134, 111, 112, 135], self.level_count), self.sonic, self.motobug)
                 self.update_sonic()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

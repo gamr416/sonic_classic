@@ -5,6 +5,7 @@ from game import Game
 from sonic import Sonic
 from map import Map
 from camera import Camera
+from motobug import Motobug
 
 MAPS_DIR = 'maps'
 pygame.init()
@@ -28,8 +29,9 @@ def load_image(name, colorkey=None):
 if __name__ == '__main__':
     camera = Camera()
     SONIC = Sonic((10, 7))
-    MAP = Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], 2)
-    game = Game(MAP, SONIC)
+    MOTOBUG = Motobug((11, 7))
+    MAP = Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], 1)
+    game = Game(MAP, SONIC, MOTOBUG)
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Conic klassik')
     Game.update_sonic(game)
