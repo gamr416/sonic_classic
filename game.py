@@ -1,6 +1,5 @@
 import pygame
 from map import Map
-import random
 
 SIZE = WIDTH, HEIGHT = 1200, 600
 SCREEN = pygame.display.set_mode(SIZE)
@@ -151,6 +150,7 @@ class Game:
                     self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
                                             True, (0, 0, 0)))
                 finish_seconds = (pygame.time.get_ticks() - finish_ticks) // 100
+                print(finish_seconds)
                 self.bg_pic_x -= 20 / FPS
                 self.second_bg_x -= 20 / FPS
                 if self.bg_pic_x + self.second_bg.get_width() <= WIDTH and self.flag_start_bg:
@@ -192,7 +192,7 @@ class Game:
                     if event.type == pygame.QUIT:
                         running = False
                         finishing = False
-                    if finish_seconds > 120 and event.type == pygame.KEYDOWN:
+                    if finish_seconds > 60 and event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_SPACE:
                             self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
                             self.level_count += 1
@@ -454,6 +454,7 @@ class Game:
                     finish_sound.set_volume(0.2)
                     gh_sound.set_volume(0)
                     finishing = True
+                    finish_ticks = pygame.time.get_ticks()
                 SCREEN.blit(lower_time_text, (27, 12))
                 SCREEN.blit(lower_ring_text, (27, 42))
                 SCREEN.blit(time_text, (25, 10))
