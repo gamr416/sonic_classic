@@ -8,7 +8,7 @@ TILE_SIZE = 40
 
 
 class Game:
-    def __init__(self, map, sonic, mob):
+    def __init__(self, map, sonic, mobs):
         self.map = map
         self.sonic = sonic
         self.left = False
@@ -43,7 +43,7 @@ class Game:
         self.count_invis = 0
         self.level_count = self.map.level
         self.total_score = 0
-        self.motobug = mob
+        self.motobugs = mobs
 
     def blit_all_tiles(self, window, map, world_offset):
         for layer in map:
@@ -79,7 +79,7 @@ class Game:
                 self.sonic.render_idle_right(screen)
         self.count_invis += 2
 
-        self.motobug.render1_right(SCREEN)
+        self.motobugs[0].render1_right(SCREEN)
 
     def update_sonic(self):
         gh_sound = pygame.mixer.Sound('music/GHzone.MP3')
@@ -150,7 +150,6 @@ class Game:
                     self.finish_font.render(f'SCORE {self.ring_amount * 100 + (600 - self.playing_seconds // 10)}',
                                             True, (0, 0, 0)))
                 finish_seconds = (pygame.time.get_ticks() - finish_ticks) // 100
-                print(finish_seconds)
                 self.bg_pic_x -= 20 / FPS
                 self.second_bg_x -= 20 / FPS
                 if self.bg_pic_x + self.second_bg.get_width() <= WIDTH and self.flag_start_bg:
@@ -255,7 +254,7 @@ class Game:
                         count = 1
                         self.fall_after_jump = True
                         self.fall = True
-                if not self.JUMP and ((( not self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
+                if not self.JUMP and (((not self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
                                        or (not self.map.is_free((map_next_x - 0.1, map_next_y + 1.25))))):
                     self.Jump = False
                     self.fall = False
@@ -422,6 +421,10 @@ class Game:
 
                 if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                     self.last_way = None
+
+                # for bug in self.motobugs:
+                #     bug.away_x =
+                print(self.world_offset)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -498,7 +501,7 @@ class Game:
                 starting = True
                 running = True
                 self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25],
-                                  [20], [67, 134, 111, 112, 135], self.level_count), self.sonic, self.motobug)
+                                  [20], [67, 134, 111, 112, 135], self.level_count), self.sonic, self.motobugs)
                 self.update_sonic()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

@@ -1,5 +1,4 @@
 import pytmx
-import os
 
 MAPS_DIR = 'maps'
 

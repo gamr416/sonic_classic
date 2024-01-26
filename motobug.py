@@ -9,13 +9,15 @@ clock = pygame.time.Clock()
 
 
 class Motobug:
-    def __init__(self, position):
+    def __init__(self, position, away_x, away_y):
         self.x, self.y = position
         self.start_x, self.start_y = 17, 17
         self.image1_right = pygame.image.load('Sonic Sprites/motobug1.png')
         self.image1_left = pygame.transform.flip(self.image1_right, True, False)
         self.image2_right = pygame.image.load('Sonic Sprites/motobug2.png')
         self.image2_left = pygame.transform.flip(self.image2_right, True, False)
+        self.away_x = away_x
+        self.away_y = away_y
 
     def get_position(self):
         return self.x, self.y

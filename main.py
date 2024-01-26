@@ -29,9 +29,11 @@ def load_image(name, colorkey=None):
 if __name__ == '__main__':
     camera = Camera()
     SONIC = Sonic((10, 7))
-    MOTOBUG = Motobug((11, 7))
+    MOTOBUG1 = Motobug((82, 2), 72, -5)
+    MOTOBUG2 = Motobug((82, 20), 72, 13)
+    MOTOBUG3 = Motobug((155, 20), 145, 13)
     MAP = Map([1, 2, 16, 17, 18, 19, 24, 25], [20], [67, 134, 111, 112, 135], 1)
-    game = Game(MAP, SONIC, MOTOBUG)
+    game = Game(MAP, SONIC, [MOTOBUG1, MOTOBUG2, MOTOBUG3])
     SCREEN.fill((0, 0, 255))
     pygame.display.set_caption('Conic klassik')
     Game.update_sonic(game)
