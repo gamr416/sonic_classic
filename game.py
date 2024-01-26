@@ -254,8 +254,8 @@ class Game:
                         count = 1
                         self.fall_after_jump = True
                         self.fall = True
-                if not self.JUMP and (((not self.map.is_free((map_next_x + 0.1, map_next_y + 1.25)))
-                                       or (not self.map.is_free((map_next_x - 0.1, map_next_y + 1.25))))):
+                if not self.JUMP and (((not self.map.is_free((map_next_x, map_next_y + 1.25)))
+                                       or (not self.map.is_free((map_next_x, map_next_y + 1.25))))):
                     self.Jump = False
                     self.fall = False
                     self.fall_after_jump = False
@@ -286,30 +286,8 @@ class Game:
                       and not self.invincibility):
                     self.ring_amount = 0
                     self.invincibility = True
-                    # self.get_damaged = True
-                    # self.damaged_way = self.last_right
                     invincibility_tick = pygame.time.get_ticks()
                     invincibility_seconds = (pygame.time.get_ticks() - invincibility_tick) // 100
-                # if self.get_damaged:
-                #     if 0.5 ** self.count_damage_jump < self.damaged_height and self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
-                #         self.world_offset[1] += 0.5 * TILE_SIZE
-                #         self.damaged_height -= 0.5 ** self.count_damage_jump
-                #     elif 0.5 ** self.count_damage_jump >= self.damaged_height and self.map.is_free(
-                #             (map_next_x, map_next_y - self.damaged_height ** self.count_damage_jump)):
-                #         self.world_offset[1] += self.damaged_height * TILE_SIZE
-                #         self.count_damage_jump = 1
-                #         self.damaged_height = 5
-                #         self.JUMP = False
-                #         self.fall_after_damage = True
-                #         self.get_damaged = False
-                #     elif not self.map.is_free((map_next_x, map_next_y - 0.5 ** self.count_damage_jump)):
-                #         self.JUMP = False
-                #         self.damaged_height = 5
-                #         self.count_damage_jump = 1
-                #         self.JUMP = False
-                #         self.get_damaged = False
-                #     if self.damaged_way:
-                #         pass
                 if invincibility_seconds > 20 and self.invincibility:
                     self.invincibility = False
                 if not self.map.is_free((map_next_x, map_next_y + 1)):
@@ -368,7 +346,7 @@ class Game:
                         self.last_right = True
                         self.last_left = False
                         if self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
-                            self.world_offset[0] -= 3 * TILE_SIZE / FPS
+                            self.world_offset[0] -= 4 * TILE_SIZE / FPS
                         else:
                             try:
                                 if not self.map.is_free((map_next_x + (2 ** self.MAX_COUNTER_WAY) / FPS, map_next_y + 0.5)):
@@ -414,10 +392,6 @@ class Game:
 
                 if not pygame.key.get_pressed()[pygame.K_s]:
                     self.down = False
-
-                # if pygame.key.get_pressed()[pygame.K_s] and pygame.key.get_pressed()[pygame.K_SPACE] and self.map.is_free(
-                #         (map_next_x, map_next_y + 1)):
-                #     self.world_offset[1] -= 1 * TILE_SIZE / FPS
 
                 if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                     self.last_way = None
@@ -501,7 +475,7 @@ class Game:
                 starting = True
                 running = True
                 self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25],
-                                  [20], [67, 134, 111, 112, 135], self.level_count), self.sonic, self.motobugs)
+                                  [20], [67, 134, 111, 112, 135], 1), self.sonic, self.motobugs)
                 self.update_sonic()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
