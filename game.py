@@ -195,7 +195,6 @@ class Game:
                         if event.key == pygame.K_SPACE:
                             self.total_score += self.ring_amount * 100 + (600 - self.playing_seconds // 10)
                             self.level_count += 1
-                            print(self.level_count)
                             if self.level_count != 4:
                                 finishing = False
                                 self.map = Map([1, 2, 16, 17, 18, 19, 24, 25], [20],
@@ -401,7 +400,6 @@ class Game:
                     self.down = False
                 if not pygame.key.get_pressed()[pygame.K_d] and not pygame.key.get_pressed()[pygame.K_a]:
                     self.last_way = None
-                print(self.world_offset)
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         running = False
@@ -477,6 +475,7 @@ class Game:
                 ending = False
                 starting = True
                 running = True
+                self.level_count = 1
                 self.__init__(Map([1, 2, 16, 17, 18, 19, 24, 25],
                                   [20], [67, 134, 111, 112, 135], self.level_count), self.sonic, self.motobugs)
                 self.update_sonic()
@@ -486,12 +485,12 @@ class Game:
             pygame.display.flip()
         while over:
             SCREEN.fill((0, 0, 0))
-            end_font = pygame.font.Font('font/sonic-press-start-button.otf', 50)
-            end_text = end_font.render("THANKS FOR PLAYING", True, (255, 255, 0))
-            end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 20)
+            # end_font = pygame.font.Font('font/sonic-press-start-button.otf', 50)
+            # end_text = end_font.render("THANKS FOR PLAYING", True, (255, 255, 0))
+            end_score_font = pygame.font.Font('font/sonic-press-start-button.otf', 50)
             end_score = end_score_font.render(f"TOTAL SCORE {self.total_score}", True, (255, 255, 0))
-            SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width() // 2, HEIGHT // 2 - end_text.get_height()))
-            SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 + 100))
+            # SCREEN.blit(end_text, (WIDTH // 2 - end_text.get_width() // 2, HEIGHT // 2 - end_text.get_height()))
+            SCREEN.blit(end_score, (WIDTH // 2 - end_score.get_width() // 2, HEIGHT // 2 - end_score.get_height()))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     over = False
